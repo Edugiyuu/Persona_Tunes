@@ -106,6 +106,16 @@ function SingMusic() {
 
   return (
     <div className="SingMusic">
+      {!selectMode && (
+        <video
+          className="background-video"
+          src="https://res.cloudinary.com/dkhej3aqu/video/upload/v1768111447/video_d1z7f0.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      )}
       {audioUrl && (
         <AudioPlayer
           src={audioUrl}
