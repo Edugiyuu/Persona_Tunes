@@ -17,7 +17,7 @@ function PatchNotes() {
     return (
         <div className="PatchNotes">
             <div className="PatchNotesItens">
-                <PatchNoteItem title="Scoring system" version="1.0.4" date="July 19, 2025" changes={["Singing until the end will give you a score..","depending on your score you receive a rank","fix some small bugs"]} />
+                <PatchNoteItem title="Animated background" version="1.0.6" date="January 11, 2026" changes={["Added 3 new background videos when singing","fix some small bugs","Added score system in the end of the song (not working yet)"]} />
                 <PatchNoteItem title="Mode Selector" version="1.0.1" date="July 3, 2025" changes={["Added a new Mode Selector","Fixed scroll animation (hopefully)","Fixed most of the screen (responsiveness) issues","Rip chie voice.."]} />
                 <PatchNoteItem title="RELEASE" version="1.0.0" date="July 1, 2025" changes={["PROJECT RELEASE!","More updates coming soon!"]} />
             </div>

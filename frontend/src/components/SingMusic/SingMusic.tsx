@@ -36,6 +36,14 @@ function SingMusic() {
   const [userAudioId, setUserAudioId] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [character, setCharacter] = useState('');
+  const [videoUrl] = useState<string>(() => {
+    const videos = [
+      import.meta.env.VITE_VIDEO1_URL,
+      import.meta.env.VITE_VIDEO2_URL,
+      import.meta.env.VITE_VIDEO3_URL
+    ];
+    return videos[Math.floor(Math.random() * videos.length)];
+  });
   const { id } = useParams();
 
 
@@ -109,7 +117,7 @@ function SingMusic() {
       {!selectMode && (
         <video
           className="background-video"
-          src="https://res.cloudinary.com/dkhej3aqu/video/upload/v1768111447/video_d1z7f0.mp4"
+          src={videoUrl}
           autoPlay
           loop
           muted
