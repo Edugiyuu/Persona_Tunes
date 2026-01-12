@@ -5,7 +5,8 @@ import "react-h5-audio-player/lib/styles.css";
 import "../SingMusic/SingMusic.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { triggerDialogAnimation, triggerBackDialogAnimation, TPDialogBack, triggerBackDialogAnimationMode, triggerDialogAnimationMode, CutInAnimation, LyricsAnimation } from "./animations";
+import AutoVoiceRecorder from "../AudioRecorder/AutoVoiceRecorder";
+import { triggerDialogAnimation, triggerBackDialogAnimation, TPDialogBack, triggerBackDialogAnimationMode, CutInAnimation, LyricsAnimation } from "./animations";
 import { PlayAudio } from "../../utils/PlayAudio";
 import MusicEnded from "../MusicEnded/MusicEnded";
 
@@ -27,31 +28,24 @@ function SingMusic() {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [currentSubtitle, setCurrentSubtitle] = useState<string>("");
   const [randomNumber, setRandomNumber] = useState<number>(0);
-  const [pacienceLevel, setpacienceLevel] = useState<number>(0);
   const [selectMode, setSelectMode] = useState<boolean>(true);
   const [showResult, setShowResult] = useState<boolean>(false);
   const [showLyrics, setShowLyrics] = useState(true);
+  const [startRecording, setStartRecording] = useState(false);
+  const [stopRecording, setStopRecording] = useState(false);
+  const [userAudioId, setUserAudioId] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [character, setCharacter] = useState('');
+  const [videoUrl] = useState<string>(() => {
+    const videos = [
+      import.meta.env.VITE_VIDEO1_URL,
+      import.meta.env.VITE_VIDEO2_URL,
+      import.meta.env.VITE_VIDEO3_URL
+    ];
+    return videos[Math.floor(Math.random() * videos.length)];
+  });
   const { id } = useParams();
 
-  //chie talking
-  /* useEffect(() => {
-    PlayAudio(`${import.meta.env.BASE_URL}/audios/Chie/ModeSelector/Chie-${pacienceLevel}.mp3`);
-    triggerDialogAnimationMode();
-  }, [pacienceLevel]);
-
-  useEffect(() => {
-    if (selectMode) {
-      const timer1 = setTimeout(() => {
-        setpacienceLevel(1);
-      }, 20000);
-
-      return () => {
-        clearTimeout(timer1);
-      }
-    }
-  }, [selectMode]); */
 
   useEffect(() => {
     TPDialogBack();
@@ -59,7 +53,6 @@ function SingMusic() {
       .then((res) => {
         setData(res.data);
         setLyrics(res.data.lyrics);
-        
         triggerBackDialogAnimation();
       })
       .catch((err) => {
@@ -68,7 +61,7 @@ function SingMusic() {
   }, [id]);
 
   useEffect(() => {
-      LyricsAnimation();
+    LyricsAnimation();
     if (currentSubtitle === "♪♪♪") {
       const characters = ["Yosuke", "Chie"];
       const character = characters[Math.floor(Math.random() * characters.length)];
@@ -121,6 +114,16 @@ function SingMusic() {
 
   return (
     <div className="SingMusic">
+      {!selectMode && (
+        <video
+          className="background-video"
+          src={videoUrl}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      )}
       {audioUrl && (
         <AudioPlayer
           src={audioUrl}
@@ -131,9 +134,42 @@ function SingMusic() {
           layout="horizontal"
           autoPlay={true}
           volume={0.8}
-          onEnded={() => { setShowResult(true); setShowLyrics(false); }}
+          onPlay={() => setStartRecording(true)}
+          onEnded={() => {
+            setStopRecording(true);
+            setShowResult(true);
+            setShowLyrics(false);
+          }}
         />
       )}
+      <AutoVoiceRecorder
+        startRecording={startRecording}
+        stopRecording={stopRecording}
+        onStop={(blobUrl, blob) => {
+          console.log("Gravação concluída:", blobUrl);
+
+          const formData = new FormData();
+          formData.append("audio", blob, "audio.webm");
+
+          axios
+            .post(`${import.meta.env.VITE_API_URL}/score/${id}`, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((res) => {
+              const idFromResponse = res.data.requestId;
+              setUserAudioId(idFromResponse); // <- Estado atualizado corretamente
+              console.log("Request ID:", idFromResponse);
+            })
+            .catch((err) => {
+              console.error("Erro ao enviar o áudio:", err);
+            });
+        }}
+      />
+
+
+
 
       <div className="stars">
         <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star1" />
@@ -153,6 +189,7 @@ function SingMusic() {
         <MusicEnded
           albumImageUrl={data?.albumImageUrl || ""}
           musicName={data?.name || ""}
+          userAudioId={userAudioId}
         />
       )}
       {!selectMode && (
@@ -191,10 +228,6 @@ function SingMusic() {
 
         </div>
       )}
-
-      {/* <div className="PersonaChar" id="ChieMode">
-        <img src={`${import.meta.env.BASE_URL}/imgs/Chie/ModeSelector/Chie-${pacienceLevel}.png`} />
-      </div> */}
 
       <div className="PersonaChar" id="RandomChar">
         <img src={`${import.meta.env.BASE_URL}/imgs/${character}/InMusic/${character}-${randomNumber}.png`} />

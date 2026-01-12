@@ -20,7 +20,6 @@
 
 .PatchNotesItens {
   font-family: "Rodin";
-  font-style: italic;
   display: flex;
   flex-direction: column;
   width: 100%;

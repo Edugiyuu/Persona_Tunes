@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { MouseEvent, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { PlayAudio } from './PlayAudio';
@@ -49,9 +49,9 @@ const CustomLink = ({ to, title, className }: any) => {
     };
 
     return (
-        <Link to={to} className={className} onClick={handleClick}>
+        <NavLink to={to} className={className} onClick={handleClick}>
             {title}
-        </Link>
+        </NavLink>
     );
 };
 

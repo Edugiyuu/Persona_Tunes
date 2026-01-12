@@ -47,7 +47,7 @@ const SelectMusic = () => {
     <div className="SelectMusic">
       <div className="AllMusics">
         {musics.map((music) => (
-          <div className="Music">
+          <div key={music._id} className="Music">
             <img src={`${import.meta.env.BASE_URL}/star.svg`} alt="music icon" />
             <div>
               <p>{music.name}</p>

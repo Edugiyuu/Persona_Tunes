@@ -1,5 +1,4 @@
 import { gsap } from "gsap";
-import { PlayAudio } from "../../utils/PlayAudio";
 
 export const animations = () => {
 
@@ -56,9 +55,6 @@ export const animations = () => {
         duration: 0.6,
         scale: 1,
         ease: "back.inOut",
-        onStart(){   
-          PlayAudio("/audios/UI/P4SkillRaise.wav",0.4);
-        }
     }
   );
 

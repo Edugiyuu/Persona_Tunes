@@ -28,7 +28,7 @@
     clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
     background-color: white;
     gap: 30px;
-
+    padding-left: 5%;
 }
 
 .MusicEnded img {
@@ -41,41 +41,36 @@
     box-shadow: rgba(0, 0, 0, 0.2) 40px 10px 15px -5px, rgba(0, 0, 0, 0.22) 0px 6px 6px -6px;
 }
 
-
 .Score {
     color: #000;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: end;
-    height: 10%;
+    height: 50%;
     margin: 0px;
     padding: 0px;
-
 }
 
-.wip {
-    font-weight: bold;
-    font-family: 'Rodin';
-    color: rgb(250, 224, 59) !important;
-    text-shadow: rgba(0, 0, 0, 0.605) 3px 2px 0px;
-    letter-spacing: 8px;
-}
-
-
-#wip {
-    font-size: 4.5em;
-    font-style: italic;
+.ScorePoints,
+.ScoreRank {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    height: 60%;
+    margin: 20px;
+    padding: 20px;
 }
 
 .Return {
     display: flex;
     justify-content: center;
     text-decoration: none;
-    color: rgb(0, 0, 0);
+    color: rgb(84, 84, 84);
     font-size: 1.5rem;
-    background-color: rgb(210, 210, 210);
-    width: 30%;
+    background-color: rgb(241, 241, 241);
+    width: 50%;
     border-radius: 8px;
 
 }
@@ -88,9 +83,153 @@
     color: rgb(0, 116, 241);
     font-size: 1.5rem;
     background-color: rgb(246, 246, 246);
-    width: 30%;
+    width: 50%;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.2) 10px 10px 0px -5px
+}
+
+.ScoreWrapper {
+    position: relative;
+    width: 75%;
+    margin: 0 auto;
+    height: 80px;
+}
+
+.ScoreLabels {
+    display: flex;
+    justify-content: space-around;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: 3;
+    color: #000;
+    font-weight: bold;
+    font-family: 'Rodin';
+    color: rgb(255, 0, 0);
+    text-shadow: rgba(120, 120, 120, 0.605) 2px 1px 2px;
+}
+
+.ScoreLabels span {
+    font-size: 1.5rem
+}
+
+.ScoreBackground {
+    width: 100%;
+    height: 23px;
+    border-radius: 15px;
+    background-color: rgb(236, 236, 236);
+    border: 1px solid rgb(215, 215, 215);
+    position: absolute;
+    bottom: 0;
+    overflow: hidden;
+
+}
+
+.ScoreBackground::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    z-index: 2;
+
+    background-image:
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg');
+
+    background-repeat: no-repeat;
+    background-position:
+        7% 0,
+        23.6% 0,
+        41% 0,
+        59% 0,
+        76% 0,
+        94% 0;
+
+    background-size: 4% 100%;
+}
+
+.ScoreBar {
+    background-color: rgb(28, 209, 28);
+    border-radius: 15px;
+    height: 100%;
+    width: 0%;
+    /* ou baseado no score */
+    position: relative;
+    z-index: 1;
+}
+
+.LabelF {
+    color: rgb(125, 144, 163) !important;
+}
+
+.LabelE {
+    color: rgb(195, 101, 229) !important;
+}
+
+.LabelD {
+    color: rgb(88, 147, 249) !important;
+}
+
+.LabelC {
+    color: rgb(42, 228, 132) !important;
+}
+
+.LabelB {
+    color: rgb(239, 39, 202) !important;
+}
+
+.LabelA {
+    color: rgb(251, 102, 43) !important;
+}
+
+.Score .LabelA,
+.Score .LabelB,
+.Score .LabelC,
+.Score .LabelD,
+.Score .LabelE,
+.Score .LabelF,
+#Points {
+    font-size: 5rem;
+    font-weight: bold;
+    font-style: normal;
+
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgb(245, 245, 245);
+    box-shadow: rgba(0, 0, 0, 0.142) 4px 3px 3px;
+}
+
+#Rank {
+    font-style: normal;
+}
+
+#Points {
+    color: rgb(64, 118, 252);
+    font-size: 4rem;
+}
+
+#RankShow,
+#PointsShow {
+    color: rgb(110, 110, 110);
+}
+
+.Result footer {
+    color: rgb(69, 69, 69);
+    font-size: 0.6rem;
+    margin-left: 60%;
 }
 
 @media (max-width: 668px) {
@@ -117,19 +256,6 @@
         font-size: 1.3rem;
     }
 
-    .wip {
-        font-weight: bold;
-        font-family: 'Rodin';
-        color: rgb(250, 224, 59) !important;
-        text-shadow: rgba(0, 0, 0, 0.605) 3px 2px 0px;
-        letter-spacing: 8px;
-    }
-
-
-    #wip {
-        font-size: 3.4em;
-        font-style: italic;
-    }
 
     .MusicEnded img {
         width: 80%;
@@ -146,4 +272,71 @@
     .Return:hover {
         width: 90%;
     }
+
+    .ScorePoints,
+    .ScoreRank {
+        height: 100%;
+        margin: 0px;
+        padding: 10px;
+    }
+
+    .ScoreWrapper {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        height: 0px;
+    }
+
+    .ScoreLabels span {
+        font-size: 1.4rem
+    }
+
+    .Score .LabelA,
+    .Score .LabelB,
+    .Score .LabelC,
+    .Score .LabelD,
+    .Score .LabelE,
+    .Score .LabelF,
+    #Points {
+        font-size: 2.5rem;
+        font-weight: bold;
+        font-style: normal;
+
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid rgb(245, 245, 245);
+        box-shadow: rgba(0, 0, 0, 0.142) 4px 3px 3px;
+    }
+    .ScoreBackground::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    z-index: 2;
+
+    background-image:
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg'),
+        url('/star.svg');
+
+    background-repeat: no-repeat;
+    background-position:
+        7% 0,
+        23.6% 0,
+        41% 0,
+        59% 0,
+        76% 0,
+        94% 0;
+
+    background-size: 7% 100%;
+}
 }

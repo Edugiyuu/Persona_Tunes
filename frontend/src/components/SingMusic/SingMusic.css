@@ -1,11 +1,26 @@
 .SingMusic {
-    position: flex;
+    position: relative;
     flex-direction: column;
     align-items: flex-start;
     font-family: "Rodin";
     font-style: italic;
     z-index: 1;
     z-index: none;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .lyrics {
@@ -204,9 +219,9 @@
 }
 
 
-/* .SingMusic .rhap_main-controls-button.rhap_play-pause-button {
+.SingMusic .rhap_main-controls-button.rhap_play-pause-button {
   display: none;
 }
 .SingMusic .rhap_progress-container {
   pointer-events: none;
-} */
+}
