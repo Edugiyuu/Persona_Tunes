@@ -1,0 +1,38 @@
+{
+  "repository_type": "multi-part",
+  "parts": [
+    {
+      "id": "frontend",
+      "name": "Frontend",
+      "root_path": "frontend",
+      "project_type_id": "web",
+      "primary_language": "TypeScript",
+      "entry_point": "frontend/src/main.tsx",
+      "architecture": "route-driven React single-page application"
+    },
+    {
+      "id": "backend",
+      "name": "Backend",
+      "root_path": "backend",
+      "project_type_id": "backend",
+      "primary_language": "TypeScript",
+      "secondary_language": "Python",
+      "entry_point": "backend/src/app.ts",
+      "architecture": "controller-centric Express API with spawned asynchronous scoring worker"
+    }
+  ],
+  "shared_assets": [
+    {
+      "id": "music-backup",
+      "root_path": "MusicsBackUp",
+      "purpose": "tracked source/backup music, instrumental, album-art, and lyric content"
+    }
+  ],
+  "integration_points": [
+    { "from": "frontend", "to": "backend", "type": "REST", "configuration": "VITE_API_URL" },
+    { "from": "backend", "to": "MongoDB Atlas", "type": "Mongoose" },
+    { "from": "backend", "to": "Cloudinary", "type": "SDK upload stream" },
+    { "from": "backend", "to": "Python scorer", "type": "child process and stdout" },
+    { "from": "Python scorer", "to": "Google Speech Recognition", "type": "external speech API" }
+  ]
+}
