@@ -89,13 +89,13 @@ describe('createStartupManifest', () => {
     )
 
     expect(fonts.load.mock.calls.map(([descriptor]) => descriptor)).toEqual([
-      '400 1em "Rodin"',
-      '800 1em "Rodin"',
+      '400 1em "Rodin DB"',
+      '800 1em "Rodin EB"',
       '400 1em "Faktos"',
     ])
     expect(fonts.check.mock.calls.map(([descriptor]) => descriptor)).toEqual([
-      '400 1em "Rodin"',
-      '800 1em "Rodin"',
+      '400 1em "Rodin DB"',
+      '800 1em "Rodin EB"',
       '400 1em "Faktos"',
     ])
   })
@@ -107,7 +107,7 @@ describe('createStartupManifest', () => {
     })
 
     await expect(manifest[0].load(new AbortController().signal)).rejects.toThrow(
-      'Font did not verify: 400 1em "Rodin"',
+      'Font did not verify: 400 1em "Rodin DB"',
     )
   })
 

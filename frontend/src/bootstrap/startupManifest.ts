@@ -68,8 +68,8 @@ interface ImageDefinition {
 const FONT_DEFINITIONS: readonly FontDefinition[] = [
   {
     critical: true,
-    descriptor: '400 1em "Rodin"',
-    family: 'Rodin',
+    descriptor: '400 1em "Rodin DB"',
+    family: 'Rodin DB',
     format: 'opentype',
     id: 'font-rodin-db',
     label: 'Rodin DB font',
@@ -78,8 +78,8 @@ const FONT_DEFINITIONS: readonly FontDefinition[] = [
   },
   {
     critical: true,
-    descriptor: '800 1em "Rodin"',
-    family: 'Rodin',
+    descriptor: '800 1em "Rodin EB"',
+    family: 'Rodin EB',
     format: 'opentype',
     id: 'font-rodin-eb',
     label: 'Rodin EB font',

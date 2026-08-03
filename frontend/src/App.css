@@ -1,5 +1,14 @@
+/* Preserve the original UI mapping: `Rodin` uses the EB face at normal weight. */
 @font-face {
   font-family: 'Rodin';
+  src: url('./assets/fonts/FOT-Rodin Pro EB.otf') format('opentype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Rodin DB';
   src: url('./assets/fonts/FOT-Rodin Pro DB.otf') format('opentype');
   font-display: swap;
   font-style: normal;
@@ -7,7 +16,7 @@
 }
 
 @font-face {
-  font-family: 'Rodin';
+  font-family: 'Rodin EB';
   src: url('./assets/fonts/FOT-Rodin Pro EB.otf') format('opentype');
   font-display: swap;
   font-style: normal;

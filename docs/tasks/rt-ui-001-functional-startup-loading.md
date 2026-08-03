@@ -53,7 +53,7 @@ Rubric rows are binary. Award the full weight only when the row is implemented a
 |---|---|---:|---:|---|
 | FLS-1 | Existing loading presentation is mounted before application routes. | 10% | 10% | `App.tsx` gates all routes behind `LoadingScreen`; `App.test.tsx` verifies routes remain absent while pending. |
 | FLS-2 | A single bootstrap state/orchestrator replaces both fixed timers and cleans up safely on unmount. | 20% | 20% | `runBootstrap.ts` plus `useAppBootstrap.ts`; tests verify success, retry, stale-attempt abort, and unmount cleanup. |
-| FLS-3 | All startup fonts are declared with correct formats and base-safe URLs, and font readiness is awaited. | 15% | 15% | Three Vite-managed `@font-face` declarations, browser `FontFace` verification/retry tests, and `/` plus `/Persona_Tunes/` traces returning 200. |
+| FLS-3 | All startup fonts are declared with correct formats and base-safe URLs, and font readiness is awaited. | 15% | 15% | Vite-managed canonical faces plus the original Rodin-to-EB compatibility mapping, browser `FontFace` verification/retry tests, and `/` plus `/Persona_Tunes/` traces returning 200. |
 | FLS-4 | A documented critical-asset manifest preloads the local loader art and essential shell imagery without pulling route-heavy media. | 10% | 10% | Six-entry `startupManifest.ts`; cold production trace contains only startup assets and lazy Home shell chunks before Home, with no audio/video/API/gallery/GLB requests. |
 | FLS-5 | The UI exposes real progress and controlled timeout/error/retry/degraded states without hanging forever. | 15% | 15% | Native settled-count progress, named failures, 10 s timeout, Retry, optional Continue, truthful unexpected-error progress, and deterministic/browser fault tests. |
 | FLS-6 | Styles are component-scoped and the loader meets accessibility, responsive, and reduced-motion requirements. | 10% | 10% | Scoped CSS and component tests; 320 px run had no overflow, Retry focus, 44 px actions, and no panel/art animation or button transition under reduced motion. |
@@ -98,6 +98,7 @@ Rubric rows are binary. Award the full weight only when the row is implemented a
 - `npm.cmd exec tsc -- --noEmit --pretty false` — exit 0 with no output.
 - `npm.cmd run build` — 1,211 modules transformed; hashed fonts and lazy route chunks emitted without unresolved asset warnings.
 - Clean production trace — document, three fonts, Chie art, logo, star, and lazy Home shell requests returned 200; console had 0 errors and 0 warnings.
+- Original typography check — Home computes to Rodin 400 backed by the EB compatibility face; canonical Rodin DB/EB and Faktos FontFace entries are loaded.
 - Explicit development-root trace — `/`, all six startup resources, and Home shell returned 200; Home links used root-relative paths.
 - Cached repeat — cached shell resources returned 304/200 and Home rendered normally.
 - Slow optional resource — overlay remained at 4/6 with Home absent, then Home rendered after settlement.
