@@ -21,7 +21,8 @@
   width: auto;
   height: auto;
   margin-left: 5%;
-  padding-top: 10px;
+  padding-top: 20px;
+  gap: 20px;
 }
 
 .Music p {
@@ -61,6 +62,7 @@
   flex-direction: column;
   width: 50%;
   height: 100%;
+  gap: 10px;
 }
 
 @media (max-width: 668px) {
