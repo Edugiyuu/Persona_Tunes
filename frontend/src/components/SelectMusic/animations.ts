@@ -6,7 +6,7 @@ export const animations = () => {
 
         gsap.fromTo(
             ".Music",
-            { opacity: 0.1, y: 200, x: 550, perspective: 200, scale: 0.7, rotationX: 100, rotationY: 100, },
+            { opacity: 0.1, y: 100, x: 800, perspective: 200, scale: 0.7, rotationX: 100, rotationY: 100, },
             {
                 opacity: 1,
                 x: 0,
@@ -19,9 +19,9 @@ export const animations = () => {
                 stagger: 0.2,
                 scrollTrigger: {
                     trigger: ".SelectMusic",
-                    start: "top 60%",
+                    start: "top 58%",
                     end: "bottom bottom",
-                    scrub: 1.8,
+                    scrub: 1.4,
                 },
             }
         );
