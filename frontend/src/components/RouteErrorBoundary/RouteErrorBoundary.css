@@ -1,0 +1,54 @@
+.routeErrorBoundary {
+  display: grid;
+  min-height: 100dvh;
+  padding:
+    max(1rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+  place-items: center;
+  color: #ffffff;
+  background: #101126;
+}
+
+.routeErrorBoundary__panel {
+  width: min(100%, 32rem);
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 1rem;
+  background: rgba(8, 9, 29, 0.96);
+  box-shadow: 0 1.5rem 4rem rgba(3, 7, 32, 0.3);
+}
+
+.routeErrorBoundary__eyebrow {
+  margin-bottom: 0.5rem;
+  color: #ffec66;
+  font: 800 0.85rem/1.2 'Rodin', system-ui, sans-serif;
+  letter-spacing: 0.14em;
+}
+
+.routeErrorBoundary__panel h1 {
+  font: 800 clamp(1.6rem, 7vw, 2.4rem)/1.1 'Rodin', system-ui, sans-serif;
+}
+
+.routeErrorBoundary__message {
+  margin-top: 0.9rem;
+  line-height: 1.5;
+}
+
+.routeErrorBoundary__button {
+  min-height: 44px;
+  margin-top: 1.25rem;
+  padding: 0.7rem 1rem;
+  border: 2px solid #ffec66;
+  border-radius: 0.4rem;
+  color: #101126;
+  background: #ffec66;
+  font: 800 1rem/1.2 'Rodin', system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.routeErrorBoundary__button:focus-visible {
+  outline: 0.2rem solid #ffffff;
+  outline-offset: 0.2rem;
+}

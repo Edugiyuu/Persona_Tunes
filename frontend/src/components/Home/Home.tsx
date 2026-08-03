@@ -1,40 +1,59 @@
-import './Home.css';
-import CustomLink from '../../utils/CustomLink';
-import { animations, LogoAnimation } from './animations';
-/* import TV from '../3dModel/3dModel'; */
-const Home = () => {
-   animations();
-   LogoAnimation();
+import './Home.css'
+import { publicAssetUrl } from '../../bootstrap/startupManifest'
+import CustomLink from '../../utils/CustomLink'
+import { animations, LogoAnimation } from './animations'
 
-    return (
-        <div className='Home'>
-            <img src={`${import.meta.env.BASE_URL}imgs/Logos/PersonaTunes.svg`} className='Icon'/>
+const logoUrl = publicAssetUrl(
+  import.meta.env.BASE_URL,
+  'imgs/Logos/PersonaTunes.svg',
+)
+const starUrl = publicAssetUrl(import.meta.env.BASE_URL, 'star.svg')
 
-            <div className="stars">
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star1" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star2" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star3" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star4" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star5" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star6" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star7" />
-                <img src={`${import.meta.env.BASE_URL}/star.svg`} className="star star8" />
-                {/* <img src="/purpleStar.svg" className="purpleStar" />
-                <img src="/purpleStar.svg" className="purpleStar" /> */}
-            </div>
-
-            <div className='HomeButtons'>
-                <div>
-                    <CustomLink to='/musics' title='SELECT MUSIC' className='Link' />
-                    <CustomLink to='/work-in-progress' title='BONUS MUSICS' className='Link'/>
-                </div>
-                <div>
-                    <CustomLink to='/patch-notes' title='PATCH NOTES' className='Link' />
-                    <CustomLink to='/work-in-progress' title='THE PROJECT' className='Link' />
-                </div>
-            </div>
-        </div>
-    );
+export interface HomeProps {
+  readonly unavailableStartupResourceIds?: ReadonlySet<string>
 }
 
-export default Home;
+const Home = ({ unavailableStartupResourceIds }: HomeProps) => {
+  animations()
+  LogoAnimation()
+
+  return (
+    <div className="Home">
+      <img alt="Persona Tunes" className="Icon" src={logoUrl} />
+
+      {!unavailableStartupResourceIds?.has('shared-star') && (
+        <div aria-hidden="true" className="stars">
+          <img alt="" className="star star1" src={starUrl} />
+          <img alt="" className="star star2" src={starUrl} />
+          <img alt="" className="star star3" src={starUrl} />
+          <img alt="" className="star star4" src={starUrl} />
+          <img alt="" className="star star5" src={starUrl} />
+          <img alt="" className="star star6" src={starUrl} />
+          <img alt="" className="star star7" src={starUrl} />
+          <img alt="" className="star star8" src={starUrl} />
+        </div>
+      )}
+
+      <div className="HomeButtons">
+        <div>
+          <CustomLink className="Link" title="SELECT MUSIC" to="/musics" />
+          <CustomLink
+            className="Link"
+            title="BONUS MUSICS"
+            to="/work-in-progress"
+          />
+        </div>
+        <div>
+          <CustomLink className="Link" title="PATCH NOTES" to="/patch-notes" />
+          <CustomLink
+            className="Link"
+            title="THE PROJECT"
+            to="/work-in-progress"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Home

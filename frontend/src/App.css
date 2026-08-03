@@ -1,13 +1,40 @@
+/* Preserve the original UI mapping: `Rodin` uses the EB face at normal weight. */
 @font-face {
   font-family: 'Rodin';
-  src: url('/Persona_Tunes/fonts/FOT-Rodin\ Pro\ EB.otf') format('truetype');
-  font-weight: normal;
+  src: url('./assets/fonts/FOT-Rodin Pro EB.otf') format('opentype');
+  font-display: swap;
   font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Rodin DB';
+  src: url('./assets/fonts/FOT-Rodin Pro DB.otf') format('opentype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Rodin EB';
+  src: url('./assets/fonts/FOT-Rodin Pro EB.otf') format('opentype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'Faktos';
+  src: url('./assets/fonts/Faktos.ttf') format('truetype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
 }
 
 body {
   color: white;
 }
+
 body::before {
   content: "";
   position: fixed;
