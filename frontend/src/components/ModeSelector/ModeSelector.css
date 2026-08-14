@@ -58,6 +58,11 @@
     margin-top: 25%;
     z-index: 1;
 }
+.Mode3DModel{
+    left: 5vw;
+    top: 32vh;
+    position: absolute;
+}
 
 .ModeButton {
     width: 80%;
@@ -76,6 +81,7 @@
     box-shadow: -20px 20px 0px rgba(0, 0, 0, 0.293);
     opacity:0
 }
+
 #Karaoke{
     width: 100%;
 }
@@ -134,7 +140,6 @@
         margin-top: 50%;
         z-index: 1;
     }
-
     .ModeButton {
         width: 100%;
         font-size: 23px;
