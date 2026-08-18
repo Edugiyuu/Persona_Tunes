@@ -50,8 +50,8 @@ context: []
 **Execution:**
 - [x] `frontend/src/components/PatchNotes/PatchNotes.tsx` -- prepend a version 1.0.7 entry dated August 17, 2026 with concise user-facing bullets covering all 3D-model work in `cd5d70d`.
 - [x] `frontend` -- run the existing automated test suite, production build, and lint; distinguish pre-existing lint debt from regressions if lint is not clean. Tests: 36/36 passed. Build: passed with the existing chunk-size warning. Lint: existing baseline debt only (3 errors, 1 warning); the inserted patch-note line has no finding.
-- [ ] Git `master` -- review the final diff, commit only the patch-note/spec changes, push `master`, and confirm the remote tip.
-- [ ] `frontend/package.json` deploy flow -- run the existing GitHub Pages publish script and verify the deployed branch and public site.
+- [x] Git `master` -- review the final diff, commit only the patch-note/spec changes, push `master`, and confirm the remote tip. Source release commit `90c9e01` was pushed successfully.
+- [x] `frontend/package.json` deploy flow -- run the existing GitHub Pages publish script and verify the deployed branch and public site. Deployment reported `Published`; the public release asset returned HTTP 200 with the 1.0.7 title.
 
 **Acceptance Criteria:**
 - Given the Patch Notes page, when it renders, then the 1.0.7 3D-model release is the first entry and older entries remain unchanged.
