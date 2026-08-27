@@ -125,6 +125,40 @@
     color: #f0f0f0;
 }
 
+.HomeButtons .Link {
+    position: relative;
+    isolation: isolate;
+    transition: color 0.1s ease-in-out, filter 0.1s ease-in-out;
+}
+
+.HomeButtons .Link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(245, 245, 245, 0.926);
+    clip-path: polygon(100% 12%, 93% 78%, 0% 51%);
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.HomeButtons .Link:hover,
+.HomeButtons .Link:focus-visible {
+    color: #075985;
+    filter: drop-shadow(10px 5px 0px #fb1e1ebf);
+}
+
+.HomeButtons .Link:hover::before,
+.HomeButtons .Link:focus-visible::before {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .HomeButtons .Link,
+    .HomeButtons .Link::before {
+        transition: none;
+    }
+}
 @media (max-width: 568px) {
     .Link {
         font-size: 16px;
