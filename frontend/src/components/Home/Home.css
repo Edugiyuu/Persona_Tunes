@@ -128,7 +128,9 @@
 .HomeButtons .Link {
     position: relative;
     isolation: isolate;
-    transition: color 0.1s ease-in-out, filter 0.1s ease-in-out;
+    transition:
+        color 0.8s cubic-bezier(0.215, 0.61, 0.355, 1),
+        filter 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .HomeButtons .Link::before {
@@ -137,20 +139,38 @@
     inset: 0;
     z-index: -1;
     background: rgba(245, 245, 245, 0.926);
-    clip-path: polygon(100% 12%, 93% 78%, 0% 51%);
+    clip-path: polygon(100% 12%, 63% 78%, 0% 51%);
     opacity: 0;
-    transition: opacity 0.1s ease-in-out;
+    transform: scale(0.7);
+    transform-origin: 100% 50%;
+    transition:
+        opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1),
+        transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1),
+        clip-path 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-.HomeButtons .Link:hover,
 .HomeButtons .Link:focus-visible {
-    color: #075985;
-    filter: drop-shadow(10px 5px 0px #fb1e1ebf);
+    color: #62bee8;
+    filter: drop-shadow(10px 5px 0px #ef0b0b5d);
 }
 
-.HomeButtons .Link:hover::before,
 .HomeButtons .Link:focus-visible::before {
     opacity: 1;
+    transform: scale(1);
+    clip-path: polygon(100% 12%, 13% 78%, 0% 51%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .HomeButtons .Link:hover {
+        color: #62bee8;
+        filter: drop-shadow(10px 5px 0px #ef0b0b5d);
+    }
+
+    .HomeButtons .Link:hover::before {
+        opacity: 1;
+        transform: scale(1);
+        clip-path: polygon(100% 12%, 13% 78%, 0% 51%);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

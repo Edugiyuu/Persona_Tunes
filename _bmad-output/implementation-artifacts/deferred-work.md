@@ -7,3 +7,6 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-home-menu-hover-treatment.md`
   summary: Type CustomLink props and limit its new title wrapper to consumers that need it.
   evidence: The existing shared component change expands DOM impact and still fails lint because its props use `any`.
+- source_spec: `_bmad-output/implementation-artifacts/spec-animate-home-menu-clip-path.md`
+  summary: Revisit the selected light-blue text color over the white Home menu accent.
+  evidence: The current `#62bee8` foreground over the nearly white polygon is below normal-text contrast guidance, but the color was an existing user choice outside this animation correction.
