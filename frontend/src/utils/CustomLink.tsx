@@ -1,9 +1,14 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, NavLinkProps, useNavigate } from 'react-router-dom';
 import { MouseEvent, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { PlayAudio } from './PlayAudio';
 
-const CustomLink = ({ to, title, className }: any) => {
+interface CustomLinkProps extends Omit<NavLinkProps, 'to' | 'children'> {
+    to: string;
+    title: string;
+}
+
+const CustomLink = ({ to, title, className, ...rest }: CustomLinkProps) => {
     const navigate = useNavigate();
     useEffect(() => {
         if (!document.getElementById('transition')) {
@@ -49,7 +54,7 @@ const CustomLink = ({ to, title, className }: any) => {
     };
 
     return (
-        <NavLink to={to} className={className} onClick={handleClick}>
+        <NavLink to={to} className={className} onClick={handleClick} {...rest}>
             <span>{title}</span>
         </NavLink>
     );

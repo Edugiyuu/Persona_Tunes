@@ -47,6 +47,7 @@ Tracked original/instrumental audio, cover images, and lyric source files. It is
 - [Implementation Task Dashboard](./tasks/index.md) — per-task completion, status, and evidence
   - [RT-UI-001 — Functional startup loading](./tasks/rt-ui-001-functional-startup-loading.md)
   - [RT-UI-002 — Animated Yukiko mode selector](./tasks/rt-ui-002-animated-yukiko-mode-selector.md)
+  - [RT-UI-003 — Persona 3 Reload home menu](./tasks/rt-ui-003-persona3-reload-home-menu.md)
 
 ## Process
 

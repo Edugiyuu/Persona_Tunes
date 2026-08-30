@@ -8,7 +8,7 @@ The frontend is a single React application with route-level screens, feature com
 
 | Component | Route | Responsibility | Main dependencies |
 |---|---|---|---|
-| `Home` | `/` | Landing menu, animated stars, primary navigation. | `CustomLink`, GSAP |
+| `Home` | `/` | Landing menu, animated stars, primary navigation. Persona 3 Reload-style menu: a persistent cursor (pointer hover + arrow keys, wrap-around, `Home`/`End`, `Enter`) drives two angular plates (magenta behind, white in front) that wipe in under the active entry and keep shearing through GSAP-tweened `clip-path` keyframes; the selected label is black with an offset red copy. Hover/select SFX and a reduced-motion fallback. | `CustomLink`, GSAP, `PlayAudio` |
 | `SelectMusic` | `/musics` | Fetches the catalog, selects a song, opens its preview. | Axios, GSAP ScrollTrigger, `ViewMusic` |
 | `SingMusic` | `/sing-music/:id` | Loads a song, selects original/instrumental mode, syncs lyrics, records microphone audio, submits scoring, and shows results. | Axios, React H5 Audio Player, `ModeSelector`, `AutoVoiceRecorder`, `MusicEnded` |
 | `PatchNotes` | `/patch-notes` | Displays static release notes and a random character illustration. | `PatchNoteItem`, `CustomLink` |

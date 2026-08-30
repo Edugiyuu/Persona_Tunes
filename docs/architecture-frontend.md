@@ -36,7 +36,7 @@ The application is a component-based SPA, but feature orchestration is concentra
 
 ## Routes and user flow
 
-1. `/` renders the animated home menu.
+1. `/` renders the animated home menu. Its four links form a Persona 3 Reload-style menu with a persistent cursor navigable by pointer and keyboard (arrows/`Home`/`End`/`Enter`); GSAP hooks in `components/Home/animations.ts` animate the intro stagger, the active-item plate wipe, and a looping `clip-path` drift that keeps the selected plate in motion.
 2. `/musics` fetches all music and lets the user preview one.
 3. `/sing-music/:id` fetches music details and asks whether to play the vocal or instrumental track.
 4. Playback starts microphone recording; timed lyric entries drive visual text and character/cut-in animations.

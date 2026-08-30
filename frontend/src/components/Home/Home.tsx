@@ -1,21 +1,97 @@
 import './Home.css'
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { publicAssetUrl } from '../../bootstrap/startupManifest'
 import CustomLink from '../../utils/CustomLink'
-import { animations, LogoAnimation } from './animations'
+import { PlayAudio } from '../../utils/PlayAudio'
+import {
+  useLogoAnimation,
+  useMenuAnimations,
+  useStarAnimations,
+} from './animations'
 
 const logoUrl = publicAssetUrl(
   import.meta.env.BASE_URL,
   'imgs/Logos/PersonaTunes.svg',
 )
 const starUrl = publicAssetUrl(import.meta.env.BASE_URL, 'star.svg')
+const hoverSoundUrl = publicAssetUrl(
+  import.meta.env.BASE_URL,
+  'audios/UI/P4Hover.wav',
+)
+
+interface MenuItemDef {
+  readonly title: string
+  readonly to: string
+}
+
+const MENU_ITEMS: readonly MenuItemDef[] = [
+  { title: 'SELECT MUSIC', to: '/musics' },
+  { title: 'BONUS MUSICS', to: '/work-in-progress' },
+  { title: 'PATCH NOTES', to: '/patch-notes' },
+  { title: 'THE PROJECT', to: '/work-in-progress' },
+]
 
 export interface HomeProps {
   readonly unavailableStartupResourceIds?: ReadonlySet<string>
 }
 
 const Home = ({ unavailableStartupResourceIds }: HomeProps) => {
-  animations()
-  LogoAnimation()
+  const navRef = useRef<HTMLElement>(null)
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const activeIndexRef = useRef(0)
+
+  useStarAnimations()
+  useLogoAnimation()
+  useMenuAnimations(navRef, activeIndex)
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex
+  }, [activeIndex])
+
+  const moveCursor = useCallback((next: number, focus = false) => {
+    const total = MENU_ITEMS.length
+    const clamped = ((next % total) + total) % total
+    if (clamped !== activeIndexRef.current) {
+      PlayAudio(hoverSoundUrl, 0.5)
+    }
+    activeIndexRef.current = clamped
+    setActiveIndex(clamped)
+    if (focus) {
+      itemRefs.current[clamped]?.focus()
+    }
+  }, [])
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    const current = activeIndexRef.current
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        event.preventDefault()
+        moveCursor(current + 1, true)
+        break
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        event.preventDefault()
+        moveCursor(current - 1, true)
+        break
+      case 'Home':
+        event.preventDefault()
+        moveCursor(0, true)
+        break
+      case 'End':
+        event.preventDefault()
+        moveCursor(MENU_ITEMS.length - 1, true)
+        break
+      case 'Enter':
+      case ' ':
+        event.preventDefault()
+        itemRefs.current[current]?.querySelector('a')?.click()
+        break
+      default:
+        break
+    }
+  }
 
   return (
     <div className="Home">
@@ -34,24 +110,43 @@ const Home = ({ unavailableStartupResourceIds }: HomeProps) => {
         </div>
       )}
 
-      <div className="HomeButtons">
-        <div>
-          <CustomLink className="Link" title="SELECT MUSIC" to="/musics" />
-          <CustomLink
-            className="Link"
-            title="BONUS MUSICS"
-            to="/work-in-progress"
-          />
-        </div>
-        <div>
-          <CustomLink className="Link" title="PATCH NOTES" to="/patch-notes" />
-          <CustomLink
-            className="Link"
-            title="THE PROJECT"
-            to="/work-in-progress"
-          />
-        </div>
-      </div>
+      <nav
+        aria-label="Main menu"
+        className="HomeButtons"
+        onKeyDown={handleKeyDown}
+        ref={navRef}
+      >
+        {[0, 1].map((row) => (
+          <div key={row}>
+            {MENU_ITEMS.slice(row * 2, row * 2 + 2).map((item, column) => {
+              const index = row * 2 + column
+              const isActive = index === activeIndex
+              return (
+                <div
+                  className="MenuItem"
+                  data-active={isActive}
+                  key={item.title + item.to}
+                  onMouseEnter={() => moveCursor(index)}
+                  ref={(element) => {
+                    itemRefs.current[index] = element
+                  }}
+                  tabIndex={isActive ? 0 : -1}
+                >
+                  <span aria-hidden="true" className="MenuBlade BladeBack" />
+                  <span aria-hidden="true" className="MenuBlade BladeFront" />
+
+                  <CustomLink
+                    className="Link"
+                    tabIndex={-1}
+                    title={item.title}
+                    to={item.to}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        ))}
+      </nav>
     </div>
   )
 }

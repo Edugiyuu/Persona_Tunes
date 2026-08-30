@@ -1,7 +1,7 @@
 ---
 title: Implementation Task Dashboard
-last_assessed: 2026-08-02
-portfolio_completion: 55
+last_assessed: 2026-08-30
+portfolio_completion: 70
 ---
 
 # Implementation Task Dashboard
@@ -25,8 +25,9 @@ This dashboard tracks implementation completion, not how complete the task docum
 |---|---|---|---:|---|
 | RT-UI-001 | [Replace the artificial startup screen with real application loading](./rt-ui-001-functional-startup-loading.md) | Done | 100% | Six-resource bootstrap, truthful recovery UI, 36 passing tests, clean builds, and complete browser acceptance evidence. |
 | RT-UI-002 | [Add an animated Yukiko 3D model to the mode selector](./rt-ui-002-animated-yukiko-mode-selector.md) | Planned | 10% | The Three.js/R3F dependencies exist; no Yukiko model, animation, or mode-selector integration exists. |
+| RT-UI-003 | [Rebuild the home menu in the Persona 3 Reload style](./rt-ui-003-persona3-reload-home-menu.md) | Done | 100% | Persistent pointer/keyboard cursor, GSAP blade + slash with reduced-motion fallback, 39 passing tests, clean build, and browser acceptance evidence. |
 
-**Portfolio completion:** 55% (equal-weight mean of RT-UI-001 at 100% and RT-UI-002 at 10%).
+**Portfolio completion:** 70% (equal-weight mean of RT-UI-001 at 100%, RT-UI-002 at 10%, and RT-UI-003 at 100%).
 
 ## Update checklist
 

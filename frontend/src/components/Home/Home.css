@@ -92,103 +92,143 @@
     align-items: center;
     height: auto;
     margin-bottom: 20px;
-    /* background-color: #ce0808; */
-
 }
 
 .HomeButtons div {
     display: flex;
-    gap: 50px;
+    gap: 70px;
     width: 100%;
     justify-content: center;
     align-items: center;
-    /* background-color: #21f84cd9; */
+}
+
+/* --- Persona 3 Reload-style menu item --------------------------------- */
+
+.MenuItem {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 24px;
+    padding: 6px 14px;
+    outline: none;
+    /* The whole entry is tilted, like the in-game list. Kept on the standalone
+       `rotate` property so GSAP can own `transform` on the children. */
+    rotate: -9deg;
+}
+
+.MenuItem:focus-visible {
+    outline: 3px solid #62d2ff;
+    outline-offset: 8px;
+    border-radius: 2px;
+}
+
+/* Two solid angular plates behind the selected label: a magenta one sitting at a
+   slightly wider angle, and a white one on top. The magenta showing past the
+   white edge is the accent — there is no gradient. */
+.MenuBlade {
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: left center;
+    pointer-events: none;
+}
+
+.BladeBack {
+    left: -38px;
+    right: -14px;
+    top: 8px;
+    bottom: -9px;
+    z-index: -3;
+    background: #ff4d9e;
+    clip-path: polygon(0% 18%, 100% 0%, 93% 96%, 0% 56%);
+}
+
+.BladeFront {
+    left: -34px;
+    right: -18px;
+    top: 8px;
+    bottom: -6px;
+    z-index: -2;
+    background: #ffffff;
+    clip-path: polygon(0% 24%, 100% 8%, 89% 92%, 0% 54%);
 }
 
 .Link {
-    display: flex;
-    flex-direction: column;
-    margin: 20px;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+    white-space: nowrap;
     background-color: transparent;
-    padding: 10px;
+    padding: 4px 2px;
     border: none;
-    color: #118eedd3;
-    font-size: 25px;
-
-    font-family: 'Rodin';
+    color: #9fd8ff;
+    font-size: 30px;
+    letter-spacing: 1px;
+    font-family: 'Rodin EB', 'Rodin', sans-serif;
+    font-style: italic;
+    text-transform: uppercase;
     cursor: pointer;
     text-decoration: none;
+    /* Matches the skewX GSAP writes, so the lean never jumps on first hover. */
+    transform: skewX(-5deg);
+    transition: color 0.35s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-.Link:hover {
-    color: #f0f0f0;
+/* Selected label: black glyphs with an offset red copy behind them. The red is
+   what reads as a colour-filter fringe on the letters. */
+.MenuItem[data-active='true'] .Link {
+    color: #0b0b14;
+    text-shadow: -0.01em 0.02em 0 #e5122e;
 }
 
-.HomeButtons .Link {
-    position: relative;
-    isolation: isolate;
-    transition:
-        color 0.8s cubic-bezier(0.215, 0.61, 0.355, 1),
-        filter 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-
-.HomeButtons .Link::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: rgba(245, 245, 245, 0.926);
-    clip-path: polygon(100% 12%, 63% 78%, 0% 51%);
-    opacity: 0;
-    transform: scale(0.7);
-    transform-origin: 100% 50%;
-    transition:
-        opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1),
-        transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1),
-        clip-path 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-
-.HomeButtons .Link:focus-visible {
-    color: #62bee8;
-    filter: drop-shadow(10px 5px 0px #ef0b0b5d);
-}
-
-.HomeButtons .Link:focus-visible::before {
-    opacity: 1;
-    transform: scale(1);
-    clip-path: polygon(100% 12%, 13% 78%, 0% 51%);
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .HomeButtons .Link:hover {
-        color: #62bee8;
-        filter: drop-shadow(10px 5px 0px #ef0b0b5d);
-    }
-
-    .HomeButtons .Link:hover::before {
-        opacity: 1;
-        transform: scale(1);
-        clip-path: polygon(100% 12%, 13% 78%, 0% 51%);
-    }
+/* Static / no-JS / pre-hydration fallback: GSAP takes over when motion is allowed. */
+.MenuItem[data-active='true'] .MenuBlade {
+    transform: scaleX(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .HomeButtons .Link,
-    .HomeButtons .Link::before {
+    .Link {
         transition: none;
     }
 }
+
+@media (max-width: 768px) {
+    .Link {
+        font-size: 20px;
+    }
+
+    .HomeButtons {
+        padding: 0 20px;
+    }
+
+    .MenuItem {
+        margin: 14px 6px;
+    }
+
+    .MenuBlade {
+        left: -10px;
+        right: -10px;
+    }
+
+
+    .HomeButtons div {
+        gap: 10px;
+    }
+}
+
 @media (max-width: 568px) {
     .Link {
-        font-size: 16px;
-        margin: 5px;
-        width: 45vw;
-        height: 12vh;
+        font-size: 18px;
+    }
+
+    .MenuItem {
+        margin: 8px;
+        width: 44vw;
     }
 
     .HomeButtons div {
-        gap: 0px;
+        gap: 6px;
         width: 100%;
     }
 
@@ -204,14 +244,15 @@
 
     }
 }
+
 @media (max-width: 348px) {
     .Link {
-        font-size: 14px;
-        margin: 2px;
-        width: 45vw;
-        height: 13vh;
+        font-size: 15px;
     }
 
+    .MenuItem {
+        margin: 4px;
+    }
 
     .Icon {
         margin-left: 70px;
@@ -219,5 +260,4 @@
         height: 280px;
         width: 220px;
     }
-
 }
