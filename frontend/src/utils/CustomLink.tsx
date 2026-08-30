@@ -50,7 +50,7 @@ const CustomLink = ({ to, title, className }: any) => {
 
     return (
         <NavLink to={to} className={className} onClick={handleClick}>
-            {title}
+            <span>{title}</span>
         </NavLink>
     );
 };
