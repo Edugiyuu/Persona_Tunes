@@ -3,7 +3,7 @@
 **Type:** Multi-part application with 2 executable parts  
 **Primary language:** TypeScript  
 **Architecture:** React SPA + Express API + asynchronous Python scoring worker  
-**Last updated:** 2026-08-02
+**Last updated:** 2026-08-30
 
 ## Project overview
 
@@ -41,6 +41,16 @@ Tracked original/instrumental audio, cover images, and lyric source files. It is
 - [Backend Architecture](./architecture-backend.md)
 - [Integration Architecture](./integration-architecture.md)
 - [Project Parts Metadata](./project-parts.json)
+
+## Implementation tracking
+
+- [Implementation Task Dashboard](./tasks/index.md) — per-task completion, status, and evidence
+  - [RT-UI-001 — Functional startup loading](./tasks/rt-ui-001-functional-startup-loading.md)
+  - [RT-UI-002 — Animated Yukiko mode selector](./tasks/rt-ui-002-animated-yukiko-mode-selector.md)
+
+## Process
+
+- [Guia prático das skills BMad](./bmad-skills-guide.md) — which BMad skill to use for each situation, and how to invoke it
 
 ## Contracts and inventories
 
