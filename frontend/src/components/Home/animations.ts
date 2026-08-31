@@ -107,7 +107,7 @@ const PLATE_SHAPES = {
   back: {
     rest: 'polygon(0% 38%, 100% 0%, 93% 96%, 0% 56%)',
     drift: [
-      'polygon(0% 14%, 100% 3%, 97% 100%, 0% 58%)',
+      'polygon(0% 14%, 100% 3%, 97% 100%, 0% 50%)',
       'polygon(0% 22%, 100% 0%, 90% 92%, 0% 62%)',
     ],
     driftDuration: 1.1,
