@@ -48,6 +48,7 @@ Tracked original/instrumental audio, cover images, and lyric source files. It is
   - [RT-UI-001 — Functional startup loading](./tasks/rt-ui-001-functional-startup-loading.md)
   - [RT-UI-002 — Animated Yukiko mode selector](./tasks/rt-ui-002-animated-yukiko-mode-selector.md)
   - [RT-UI-003 — Persona 3 Reload home menu](./tasks/rt-ui-003-persona3-reload-home-menu.md)
+  - [RT-UI-004 — Persona 3 Reload mode selector](./tasks/rt-ui-004-persona3-reload-mode-selector.md)
 
 ## Process
 
@@ -65,7 +66,6 @@ Tracked original/instrumental audio, cover images, and lyric source files. It is
 - [Frontend Development Guide](./development-guide-frontend.md)
 - [Backend Development Guide](./development-guide-backend.md)
 - [Deployment Guide](./deployment-guide.md)
-- [Contribution Guide](./contribution-guide.md)
 
 ## Existing documentation
 

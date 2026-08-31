@@ -1,0 +1,162 @@
+---
+id: RT-UI-005
+title: Add an optional Elizabeth-guided navigation tutorial on first load
+status: blocked
+branch: 
+area: frontend/guide
+owner: Edupa
+created: 2026-08-31
+updated: 2026-08-31
+depends_on: []
+supersedes: []
+---
+
+# RT-UI-005: Add an optional Elizabeth-guided navigation tutorial on first load
+
+> **Done means:** a first-time visitor is asked whether they want a tour, and if
+> they accept, Elizabeth (Persona 3 Reload) appears over a darkened screen in a
+> Persona-style dialogue box and walks them to the "SELECT MUSIC" button, which
+> is spotlit and stays clickable.
+
+## Why
+
+Nothing on the site explains where to start. New visitors land on the Persona
+home menu with four tilted entries and no hint that "SELECT MUSIC" is the way in.
+A short, skippable guided tour — fronted by a Velvet Room attendant, matching the
+Persona styling the rest of the UI now uses (RT-UI-003, RT-UI-004) — gives that
+hint without getting in the way of returning users.
+
+This task delivers the **visual + interaction shell** of the guide: the opt-in
+prompt, the darkening, Elizabeth's portrait, the dialogue box, and the button
+spotlight. Her recorded voice lines and the open/closed-mouth lip-sync frames are
+a separate follow-up (see "Not this task"); the component is built with the seam
+for them already in place.
+
+## Inputs
+
+Everything this task needs and does not produce itself. **A missing input is a
+blocker, not a footnote** — if any row is `no`, the task status is `blocked`.
+
+| # | What | Where | Have it? |
+|---|---|---|---|
+| I-1 | Elizabeth portrait, neutral / mouth-closed, transparent PNG, framed like the other character art | `frontend/public/imgs/Elizabeth/Guide/Elizabeth0.png` | **no — blocks AC-5** |
+| I-2 | Persona dialogue-box styling to match | The shipped home menu (`Home.css`) and mode selector (`ModeSelector.css`) — italic all-caps, angular plates, black/red label pairing — are the in-repo reference | yes |
+| I-3 | Decision: spotlight mechanism (D-1) | see D-1 | **no — blocks AC-4** |
+| I-4 | Decision: prompt persistence (D-2) | see D-2 | **no — blocks AC-8** |
+| I-5 | Decision: which side Elizabeth stands on (D-3) | see D-3 | **no — blocks AC-5** |
+| I-6 | `gsap` | `^3.12.7`, already installed | yes |
+| I-7 | Hover / select sound cues | `audios/UI/P4Hover.wav`, `audios/UI/P4Select.wav` — already in repo | yes |
+
+I-1 is the hard blocker: without any Elizabeth art there is nothing to render.
+I-3/I-4/I-5 are decisions Edupa owns and can answer without new assets.
+
+## Definition of done
+
+Every row is binary — it passes or it does not. Completion is
+`checked ÷ total`, nothing weighted.
+
+| # | The check | Proven by | ✓ |
+|---|---|---|:-:|
+| AC-1 | On a load of `/` with no stored choice, a Persona-styled prompt asks whether to start the guide and offers an accept and a decline control; the rest of Home is inert behind it until a choice is made | `GuideTour.test.tsx`; screenshot at 1440px | ☐ |
+| AC-2 | Declining, or pressing `Esc`, closes the prompt and leaves Home fully interactive with no scrim and no guide | `GuideTour.test.tsx`; browser: decline, then activate a menu item | ☐ |
+| AC-3 | Accepting covers the whole viewport with a dark scrim over Home | `GuideTour.test.tsx` asserts the scrim node; screenshot | ☐ |
+| AC-4 | While the guide is active the "SELECT MUSIC" entry is cut out of / raised above the scrim so it reads as spotlit, and it remains clickable | browser: with the guide open, click the entry and land on `/musics`; screenshot of the spotlight | ☐ |
+| AC-5 | Elizabeth's portrait is visible above the scrim for the whole guide, on the side chosen in D-3, with no layout shift when it appears | `GuideTour.test.tsx` asserts the image is mounted; screenshots at 1440 / 768 / 360px | ☐ |
+| AC-6 | A Persona-style dialogue box shows her name and a line telling the player to click "SELECT MUSIC" | `GuideTour.test.tsx` asserts the name and the instruction text; screenshot | ☐ |
+| AC-7 | Clicking the spotlit "SELECT MUSIC" ends the guide and navigates to `/musics`; returning to `/` afterwards does not reopen the prompt or the guide | `GuideTour.test.tsx`; browser round trip | ☐ |
+| AC-8 | After one accept or decline, a reload of `/` does not show the prompt again (persisted per D-2) | `GuideTour.test.tsx` with storage stubbed | ☐ |
+| AC-9 | With `prefers-reduced-motion: reduce`, the scrim, portrait, and text appear instantly — no slide-in, no typewriter, no spotlight pulse — and every control still works | `animation.test.tsx` with `matchMedia` stubbed to `reduce`: `gsap.set` used, `gsap.to` never called | ☐ |
+| AC-10 | With the guide open there is no horizontal scroll and no overlap at 1440, 768, 360px, and no guide-related console errors on a clean load | browser: `scrollWidth - clientWidth == 0` at all three widths; console clean | ☐ |
+| AC-11 | `npm run test`, changed-file lint, and `npm run build` are all green | test count up from the current 61; `eslint` clean on changed paths; build succeeds | ☐ |
+
+**Completion: 0/11 (0%)**
+
+## Touches
+
+One line per file. *What* changes, never *how*.
+
+| File | Change |
+|---|---|
+| `frontend/src/components/GuideTour/GuideTour.tsx` | new — opt-in prompt, scrim, Elizabeth portrait (frame stack, ready for lip-sync), Persona dialogue box, spotlight on the target; owns the "seen" flag |
+| `frontend/src/components/GuideTour/GuideTour.css` | new — scrim, portrait placement per D-3, dialogue box in the Persona plate/label style, reduced-motion block |
+| `frontend/src/components/GuideTour/animation.ts` | new — scrim fade, portrait slide-in, typewriter reveal, spotlight pulse; scoped and cleaned up on unmount; reduced-motion snap path |
+| `frontend/src/components/GuideTour/GuideTour.test.tsx` | new — covers AC-1, AC-2, AC-3, AC-5, AC-6, AC-7, AC-8 |
+| `frontend/src/components/GuideTour/animation.test.tsx` | new — covers AC-9 and unmount teardown against the real hook with `gsap` mocked |
+| `frontend/src/components/GuideTour/GuideTour.css.test.ts` | new — CSS contract for the reduced-motion opt-out |
+| `frontend/src/components/Home/Home.tsx` | mount `<GuideTour>`; give the "SELECT MUSIC" `MenuItem` a stable hook (id or `data-` attr) for the spotlight to target |
+| `frontend/src/components/Home/Home.css` | allow the targeted entry to sit above the scrim while the guide is active |
+| `frontend/public/imgs/Elizabeth/Guide/` | new art (I-1) |
+| `docs/tasks/index.md` | dashboard row and portfolio percentage |
+| `docs/component-inventory-frontend.md` | GuideTour entry |
+| `package.json` | only if D-1 picks a library |
+
+## Not this task
+
+- Elizabeth's **voice lines** (audio playback, timing, subtitles sync).
+- The **lip-sync** open/closed-mouth frame animation. The portrait is built as a
+  stacked frame set (like the Aigis blink in `ModeSelector`) with a `speaking`
+  state that currently does nothing, so the frames drop in later.
+- A **multi-step** tour. This guide has one step: click "SELECT MUSIC". Extra
+  steps (what the music list does, the mode selector, recording) are a later
+  task.
+- The guide on any route other than `/`.
+- Any change to what the menu entries do or where they link.
+- Extracting a shared "Persona dialogue box" component — worth doing once a
+  second screen needs one.
+
+## Approach
+
+*Optional, max 10 lines.*
+
+- Mount the guide inside `Home` rather than `App` so it can reference the real
+  menu DOM; render it in a portal / fixed layer so the scrim covers the logo and
+  stars too.
+- Spotlight: read the target's `getBoundingClientRect()` and either drive the
+  chosen library or paint a `box-shadow`-based cutout — see D-1. The target entry
+  gets a raised `z-index` and keeps its normal click handler, so "click SELECT
+  MUSIC" is the same navigation the menu already does.
+- Lip-sync seam: portrait is `<div class="ElizabethPortrait">` holding one
+  `<img>` per mouth frame; a `speaking` boolean (unused now) will cross-fade
+  them, mirroring `ModeArtworkBlink`.
+- Persist the choice under one key (e.g. `rt.guide.seen`); wrap every
+  `localStorage` access in try/catch — private windows throw.
+
+## Verification
+
+Copy-pasteable, in order. No prose.
+
+```bash
+cd frontend && npm run test
+```
+
+```bash
+cd frontend && npx eslint src/components/GuideTour/ src/components/Home/
+```
+
+```bash
+cd frontend && npm run build
+```
+
+Manual, at `http://localhost:5173/Persona_Tunes/` with `localStorage` cleared:
+reload and confirm the prompt appears; decline once and confirm Home is usable
+and the prompt is gone on the next reload; clear storage, reload, accept, and
+confirm the screen darkens, Elizabeth and her dialogue box appear, "SELECT MUSIC"
+is spotlit and clickable, and clicking it ends the guide and reaches `/musics`;
+return to `/` and confirm nothing reappears. Repeat with
+`prefers-reduced-motion: reduce` and at 1440 / 768 / 360px.
+
+## Open decisions
+
+| # | Question | Blocks | Owner | Answer |
+|---|---|---|---|---|
+| D-1 | Spotlight mechanism: add a tour library (`driver.js` — tiny, framework-agnostic, does the scrim cutout + popover) or hand-roll a `box-shadow` cutout from the target rect? Hand-rolling keeps full Persona styling control and adds no dependency. | AC-4, I-3 | Edupa | — *(recommend: hand-rolled)* |
+| D-2 | Persistence: remember the accept/decline forever, per browser session only, or re-ask after some time? | AC-8, I-4 | Edupa | — *(recommend: remember forever, one `localStorage` key)* |
+| D-3 | Which side does Elizabeth stand on — left (the emptier side of the menu) or right (mirroring the mode selector's Aigis)? | AC-5, I-5 | Edupa | — *(recommend: right)* |
+
+## Log
+
+Newest last. One line per real change of state.
+
+| Date | What happened |
+|---|---|
+| 2026-08-31 | Task written. Blocked on I-1 (Elizabeth art) and the three open decisions. Voice and lip-sync split out as a follow-up. |

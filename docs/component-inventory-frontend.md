@@ -19,12 +19,13 @@ The frontend is a single React application with route-level screens, feature com
 | Component | Category | Responsibility | Reuse status |
 |---|---|---|---|
 | `ViewMusic` | media preview | Album art, song preview, difficulty label, and start link. | Feature-specific but separable. |
-| `ModeSelector` | workflow control | Chooses vocal track or instrumental track before playback. | Feature-specific. |
+| `ModeSelector` | workflow control | Chooses vocal track or instrumental track before playback. Persona 3 Reload-style entries sharing the home menu's language: a persistent cursor (pointer hover + arrow keys with wrap-around, `Home`/`End`) drives two angular plates (magenta behind, white in front) that wipe in under the active entry and keep shearing through GSAP-tweened `clip-path` keyframes; the selected label is black with an offset red copy. Hover/select SFX and a reduced-motion fallback. Character artwork (`Aigis1.png`) stands where the Yukiko 3D model used to be. | Feature-specific. Its plate styling and cursor hook duplicate `Home`'s — worth extracting once a third screen needs them. |
 | `AutoVoiceRecorder` | media input | Wraps `react-media-recorder` and exposes controlled start/stop. | Reusable with a clearer status/error contract. |
 | `MusicEnded` | result display | Polls score status, derives rank, animates score, and returns to catalog. | Feature-specific; polling should move to a hook/service. |
 | `PatchNoteItem` | content display | Renders one release-note entry. | Reusable; optional `image` is currently unused. |
 | `LoadingScreen` | application shell | Shows a fixed one-second loading state with remote GIF. | Global, but its CSS selectors leak into other screens. |
 | `TV` / `Modelo3D` | experimental 3D | Loads and displays a GLB model. | Currently commented out and uses a likely invalid public path. |
+| `Yukiko` (`3dModel`) | experimental 3D | R3F canvas that loads and idle-animates `idle_yukiko.glb`. | **Unused since RT-UI-004** — dropped from `ModeSelector`, so no route pulls Three.js any more. Kept for the paused RT-UI-002. |
 
 ## Shared utilities
 
