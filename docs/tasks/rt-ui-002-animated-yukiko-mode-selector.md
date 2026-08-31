@@ -1,13 +1,27 @@
 ---
 id: RT-UI-002
 title: Add an animated Yukiko 3D model to the mode selector
-status: Planned
+status: paused
 completion: 10
-last_assessed: 2026-08-02
-owner: TBD
+last_assessed: 2026-08-30
+owner: Edupa
 ---
 
 # RT-UI-002: Add an animated Yukiko 3D model to the mode selector
+
+> **Paused** on 2026-08-30 by Edupa. RT-UI-004 rebuilt this same screen in the
+> Persona 3 Reload style *without* a 3D model, putting character artwork
+> (`Aigis1.png`) where the model would have gone. Nothing here is blocked — the
+> work was parked, not abandoned.
+>
+> Kept in place for it: `frontend/src/components/3dModel/`, the `.glb` assets
+> under `frontend/public/3dModels/`, and the `three` / `@react-three/*`
+> dependencies. Note that no route imports them any more, so they cost bundle
+> size only if this task restarts.
+>
+> **To restart:** decide which screen the model belongs to. The mode selector is
+> taken; this task's scope below still assumes it, and would need rewriting to
+> the current task template first.
 
 ## Outcome
 

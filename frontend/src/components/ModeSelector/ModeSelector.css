@@ -45,7 +45,53 @@
     justify-content: center;
     width: 105%;
     background-color: white;
-   
+
+}
+
+/* Character artwork standing where the 3D model used to be (D-1). */
+.ModeArtwork {
+    position: absolute;
+    left: 2vw;
+    bottom: 0;
+    height: 78vh;
+    /* Both frames are absolutely positioned, so this box has no in-flow child
+       to get its width from. The source images are square, so state it. */
+    aspect-ratio: 1;
+    max-width: 46vw;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+/* The two blink frames are identically framed, so stacking them in the same box
+   swaps the eyes without moving anything else. */
+.ModeArtworkFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom left;
+    filter:
+    drop-shadow(-25px 0px 0px rgb(255, 255, 255));
+}
+
+/* Closed eyes sit on top at zero opacity and flash in. Two blinks per cycle,
+   the second one close behind the first, because a single evenly-spaced blink
+   reads like a metronome rather than a person. */
+.ModeArtworkBlink {
+    opacity: 0;
+    animation: ModeArtworkBlink 7s steps(1, end) infinite;
+}
+
+@keyframes ModeArtworkBlink {
+    0%, 38% { opacity: 0; }
+    41.8%, 42% { opacity: 1; }
+    42.5%, 43.5% { opacity: 0; }
+    44%, 45% { opacity: 1; }
+    45.5%, 89% { opacity: 0; }
+    89.5%, 90% { opacity: 1; }
+    90.5%, 100% { opacity: 0; }
 }
 
 .ModeButtons {
@@ -56,37 +102,110 @@
     width: 50%;
     margin-left: 50%;
     margin-top: 25%;
+    /* The plates overhang the label on both sides and the entry is rotated, so
+       the column needs room or the selected entry clips against the viewport. */
+    padding-right: 5vw;
+    box-sizing: border-box;
     z-index: 1;
 }
-.Mode3DModel{
-    left: 5vw;
-    top: 32vh;
-    position: absolute;
-}
 
-.ModeButton {
-    width: 80%;
-    font-size: 35px;
-    background: white;
-    color: #118eed;
-    font-style: italic;
-    font-family: "Rodin";
+/* --- Persona 3 Reload-style mode entry --------------------------------- */
+
+.ModeItem {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* Sized to its own label, so the plates hug the text instead of stretching
+       across the column the way a full-width button would. */
+    width: fit-content;
+    margin: 12px 0;
+    padding: 6px 14px;
+    background: none;
     border: none;
-
-    padding: 10px 20px;
+    outline: none;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-    box-shadow: -20px 20px 0px rgba(0, 0, 0, 0.293);
-    opacity:0
+    /* The whole entry is tilted, like the in-game list. Kept on the standalone
+       `rotate` property so GSAP can own `transform` on the children. */
+    rotate: -9deg;
 }
 
-#Karaoke{
-    width: 100%;
+.ModeItem:focus-visible {
+    outline: 3px solid #62d2ff;
+    outline-offset: 8px;
+    border-radius: 2px;
 }
-.ModeButton:hover {
-   padding: 15px;
+
+/* Two solid angular plates behind the selected label: a magenta one sitting at a
+   slightly wider angle, and a white one on top. The magenta showing past the
+   white edge is the accent — there is no gradient. */
+.ModeBlade {
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: left center;
+    pointer-events: none;
+}
+
+.ModeBladeBack {
+    left: -38px;
+    right: -14px;
+    top: 8px;
+    bottom: -9px;
+    z-index: -3;
+    background: #ff4d9e;
+    clip-path: polygon(0% 18%, 100% 0%, 93% 96%, 0% 56%);
+}
+
+.ModeBladeFront {
+    left: -34px;
+    right: -18px;
+    top: 8px;
+    bottom: -6px;
+    z-index: -2;
+    background: #ffffff;
+    clip-path: polygon(0% 24%, 100% 8%, 89% 92%, 0% 54%);
+}
+
+.ModeLabel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 4px 2px;
+    color: #9fd8ff;
+    font-size: 35px;
+    letter-spacing: 1px;
+    font-family: 'Rodin EB', 'Rodin', sans-serif;
+    font-style: italic;
+    text-transform: uppercase;
+    /* Matches the skewX GSAP writes, so the lean never jumps on first hover. */
+    transform: skewX(-5deg);
+    transition: color 0.35s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Selected label: black glyphs with an offset red copy behind them. The red is
+   what reads as a colour-filter fringe on the letters. */
+.ModeItem[data-active='true'] .ModeLabel {
+    color: #0b0b14;
+    text-shadow: -0.01em 0.02em 0 #e5122e;
+}
+
+/* Static / no-JS / pre-hydration fallback: GSAP takes over when motion is allowed. */
+.ModeItem[data-active='true'] .ModeBlade {
+    transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ModeLabel {
+        transition: none;
+    }
+
+    /* Eyes stay open rather than frozen shut. */
+    .ModeArtworkBlink {
+        animation: none;
+        opacity: 0;
+    }
 }
 
 @media (max-width: 1260px) {
@@ -96,12 +215,40 @@
         font-size: 50px;
     }
 
+    .ModeLabel {
+        font-size: 30px;
+    }
+
 }
+
 @media (max-width: 1060px) {
 
     .ModeSelectorTitle {
         position: fixed;
         font-size: 40px;
+    }
+
+    .ModeArtwork {
+        height: 66vh;
+        max-width: 42vw;
+    }
+
+    .ModeLabel {
+        font-size: 26px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .ModeArtwork {
+        height: 52vh;
+        max-width: 52vw;
+    }
+
+    .ModeButtons {
+        width: 70%;
+        margin-left: 30%;
     }
 
 }
@@ -132,6 +279,10 @@
         width: 120%;
     }
 
+    .ModeArtwork {
+        height: 44vh;
+        max-width: 62vw;
+    }
 
     .ModeButtons {
         gap: 1.5rem;
@@ -140,10 +291,19 @@
         margin-top: 50%;
         z-index: 1;
     }
-    .ModeButton {
-        width: 100%;
+
+    .ModeLabel {
         font-size: 23px;
-        box-shadow: -10px 15px 0px rgba(0, 0, 0, 0.293);
+    }
+
+    .ModeBladeBack {
+        left: -22px;
+        right: -8px;
+    }
+
+    .ModeBladeFront {
+        left: -18px;
+        right: -12px;
     }
 
 }
@@ -156,6 +316,10 @@
         font-size: 14px;
     }
 
+    .ModeLabel {
+        font-size: 19px;
+    }
+
 }
 
 @media (max-width: 320px) {
@@ -163,6 +327,10 @@
     .ModeSelectorTitle {
         position: fixed;
         font-size: 12px;
+    }
+
+    .ModeLabel {
+        font-size: 17px;
     }
 
 }
