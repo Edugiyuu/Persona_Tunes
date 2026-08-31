@@ -1,7 +1,7 @@
 ---
 title: Implementation Task Dashboard
 last_assessed: 2026-08-31
-portfolio_completion: 100
+portfolio_completion: 75
 ---
 
 # Implementation Task Dashboard
@@ -47,8 +47,10 @@ counting the next time one is touched.
 | RT-UI-002 | [Add an animated Yukiko 3D model to the mode selector](./rt-ui-002-animated-yukiko-mode-selector.md) | paused | 10% | Parked by Edupa on 2026-08-30. RT-UI-004 rebuilt the same screen without a 3D model; the `Yukiko` component and the `.glb` assets are kept in place. Restarting it means deciding which screen it belongs to. |
 | RT-UI-003 | [Rebuild the home menu in the Persona 3 Reload style](./rt-ui-003-persona3-reload-home-menu.md) | done | 100% | Persistent pointer/keyboard cursor, GSAP blade + slash with reduced-motion fallback, 39 passing tests, clean build, and browser acceptance evidence. |
 | RT-UI-004 | [Rebuild the mode selector page in the Persona 3 Reload style](./rt-ui-004-persona3-reload-mode-selector.md) | done | 12/12 (100%) | 3D model gone (no `three` chunk in the build), plates and cursor ported from the home menu, blinking character artwork, 61 tests pass, clean lint and build, no overflow at seven widths, reduced-motion and tween-teardown both covered by tests. |
+| RT-UI-005 | [Add an optional Elizabeth-guided navigation tutorial on first load](./rt-ui-005-elizabeth-navigation-guide.md) | blocked | 0/11 (0%) | Task written. Blocked on the Elizabeth portrait art (I-1) and three open decisions (spotlight mechanism, prompt persistence, portrait side). Voice lines and lip-sync frames split into a follow-up. |
+| RT-UI-006 | [Rebuild the patch notes page in the Persona 3 Reload style](./rt-ui-006-persona3-reload-patch-notes.md) | planned | 0/9 (0%) | Task written. All inputs present. Static restyled cards (no cursor), patch data moves to a typed module, and the render-body `triggerH2Animation` yoyo is replaced with scoped GSAP. Two non-blocking decisions (ongoing motion, keep the random character). |
 
-**Portfolio completion:** 100% (equal-weight mean of the three tasks in play: 100%, 100%, 100%). RT-UI-002 is paused and excluded.
+**Portfolio completion:** 75% (equal-weight mean of the four tasks in play: 100%, 100%, 100%, 0%). RT-UI-002 is paused and excluded; RT-UI-005 is blocked and excluded.
 
 ## Update checklist
 

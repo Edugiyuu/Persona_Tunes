@@ -66,7 +66,6 @@ Tracked original/instrumental audio, cover images, and lyric source files. It is
 - [Frontend Development Guide](./development-guide-frontend.md)
 - [Backend Development Guide](./development-guide-backend.md)
 - [Deployment Guide](./deployment-guide.md)
-- [Contribution Guide](./contribution-guide.md)
 
 ## Existing documentation
 
