@@ -187,6 +187,15 @@
     transform: scaleX(1);
 }
 
+/* While the Elizabeth guide runs (RT-UI-005), driver.js cuts this entry out of
+   its scrim and stamps `.driver-active-element` on it. This lifts the entry clear
+   of the scrim (10000) *and* of the guide layer (10001), so Elizabeth can never
+   end up standing in front of the one thing she is pointing at. It stays the
+   same clickable link it always was. */
+.MenuItem.driver-active-element {
+    z-index: 10003;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .Link {
         transition: none;

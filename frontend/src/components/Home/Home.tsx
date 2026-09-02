@@ -2,6 +2,10 @@ import './Home.css'
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { publicAssetUrl } from '../../bootstrap/startupManifest'
 import CustomLink from '../../utils/CustomLink'
+import GuideTour, {
+  GUIDE_TARGET_ATTRIBUTE,
+  GUIDE_TARGET_VALUE,
+} from '../GuideTour/GuideTour'
 import { PlayAudio } from '../../utils/PlayAudio'
 import {
   useLogoAnimation,
@@ -22,10 +26,12 @@ const hoverSoundUrl = publicAssetUrl(
 interface MenuItemDef {
   readonly title: string
   readonly to: string
+  /** Marks the entry the Elizabeth guide spotlights (RT-UI-005). */
+  readonly guideTarget?: boolean
 }
 
 const MENU_ITEMS: readonly MenuItemDef[] = [
-  { title: 'SELECT MUSIC', to: '/musics' },
+  { title: 'SELECT MUSIC', to: '/musics', guideTarget: true },
   { title: 'BONUS MUSICS', to: '/work-in-progress' },
   { title: 'PATCH NOTES', to: '/patch-notes' },
   { title: 'THE PROJECT', to: '/work-in-progress' },
@@ -125,6 +131,9 @@ const Home = ({ unavailableStartupResourceIds }: HomeProps) => {
                 <div
                   className="MenuItem"
                   data-active={isActive}
+                  {...(item.guideTarget
+                    ? { [GUIDE_TARGET_ATTRIBUTE]: GUIDE_TARGET_VALUE }
+                    : {})}
                   key={item.title + item.to}
                   onMouseEnter={() => moveCursor(index)}
                   ref={(element) => {
@@ -147,6 +156,8 @@ const Home = ({ unavailableStartupResourceIds }: HomeProps) => {
           </div>
         ))}
       </nav>
+
+      <GuideTour />
     </div>
   )
 }
