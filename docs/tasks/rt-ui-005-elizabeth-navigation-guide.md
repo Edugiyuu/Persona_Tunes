@@ -2,11 +2,11 @@
 id: RT-UI-005
 title: Add an optional Elizabeth-guided navigation tutorial on first load
 status: blocked
-branch: 
+branch: feat-elizabeth-guide
 area: frontend/guide
 owner: Edupa
 created: 2026-08-31
-updated: 2026-08-31
+updated: 2026-09-01
 depends_on: []
 supersedes: []
 ---
@@ -41,14 +41,15 @@ blocker, not a footnote** — if any row is `no`, the task status is `blocked`.
 |---|---|---|---|
 | I-1 | Elizabeth portrait, neutral / mouth-closed, transparent PNG, framed like the other character art | `frontend/public/imgs/Elizabeth/Guide/Elizabeth0.png` | **no — blocks AC-5** |
 | I-2 | Persona dialogue-box styling to match | The shipped home menu (`Home.css`) and mode selector (`ModeSelector.css`) — italic all-caps, angular plates, black/red label pairing — are the in-repo reference | yes |
-| I-3 | Decision: spotlight mechanism (D-1) | see D-1 | **no — blocks AC-4** |
-| I-4 | Decision: prompt persistence (D-2) | see D-2 | **no — blocks AC-8** |
-| I-5 | Decision: which side Elizabeth stands on (D-3) | see D-3 | **no — blocks AC-5** |
+| I-3 | Decision: spotlight mechanism (D-1) | see D-1 — `driver.js`, highlight only, popover disabled | yes |
+| I-4 | Decision: prompt persistence (D-2) | see D-2 — `localStorage`, expires after 1 day | yes |
+| I-5 | Decision: which side Elizabeth stands on (D-3) | see D-3 — right | yes |
 | I-6 | `gsap` | `^3.12.7`, already installed | yes |
 | I-7 | Hover / select sound cues | `audios/UI/P4Hover.wav`, `audios/UI/P4Select.wav` — already in repo | yes |
+| I-8 | `driver.js` | not installed — `npm i driver.js` in `frontend/`, per D-1 | **no — installed during the task** |
 
-I-1 is the hard blocker: without any Elizabeth art there is nothing to render.
-I-3/I-4/I-5 are decisions Edupa owns and can answer without new assets.
+I-1 is the only blocker: without any Elizabeth art there is nothing to render.
+D-1/D-2/D-3 are answered, so I-3/I-4/I-5 are cleared; I-8 is a one-command install.
 
 ## Definition of done
 
@@ -60,11 +61,11 @@ Every row is binary — it passes or it does not. Completion is
 | AC-1 | On a load of `/` with no stored choice, a Persona-styled prompt asks whether to start the guide and offers an accept and a decline control; the rest of Home is inert behind it until a choice is made | `GuideTour.test.tsx`; screenshot at 1440px | ☐ |
 | AC-2 | Declining, or pressing `Esc`, closes the prompt and leaves Home fully interactive with no scrim and no guide | `GuideTour.test.tsx`; browser: decline, then activate a menu item | ☐ |
 | AC-3 | Accepting covers the whole viewport with a dark scrim over Home | `GuideTour.test.tsx` asserts the scrim node; screenshot | ☐ |
-| AC-4 | While the guide is active the "SELECT MUSIC" entry is cut out of / raised above the scrim so it reads as spotlit, and it remains clickable | browser: with the guide open, click the entry and land on `/musics`; screenshot of the spotlight | ☐ |
+| AC-4 | While the guide is active the "SELECT MUSIC" entry is cut out of / raised above the scrim so it reads as spotlit, and it remains clickable; no `driver.js` popover, arrow, or default chrome is rendered | browser: with the guide open, click the entry and land on `/musics`; screenshot of the spotlight | ☐ |
 | AC-5 | Elizabeth's portrait is visible above the scrim for the whole guide, on the side chosen in D-3, with no layout shift when it appears | `GuideTour.test.tsx` asserts the image is mounted; screenshots at 1440 / 768 / 360px | ☐ |
 | AC-6 | A Persona-style dialogue box shows her name and a line telling the player to click "SELECT MUSIC" | `GuideTour.test.tsx` asserts the name and the instruction text; screenshot | ☐ |
 | AC-7 | Clicking the spotlit "SELECT MUSIC" ends the guide and navigates to `/musics`; returning to `/` afterwards does not reopen the prompt or the guide | `GuideTour.test.tsx`; browser round trip | ☐ |
-| AC-8 | After one accept or decline, a reload of `/` does not show the prompt again (persisted per D-2) | `GuideTour.test.tsx` with storage stubbed | ☐ |
+| AC-8 | After one accept or decline, a reload of `/` does not show the prompt again for 24h; once the stored choice is older than 24h the prompt asks again (per D-2) | `GuideTour.test.tsx` with storage and clock stubbed | ☐ |
 | AC-9 | With `prefers-reduced-motion: reduce`, the scrim, portrait, and text appear instantly — no slide-in, no typewriter, no spotlight pulse — and every control still works | `animation.test.tsx` with `matchMedia` stubbed to `reduce`: `gsap.set` used, `gsap.to` never called | ☐ |
 | AC-10 | With the guide open there is no horizontal scroll and no overlap at 1440, 768, 360px, and no guide-related console errors on a clean load | browser: `scrollWidth - clientWidth == 0` at all three widths; console clean | ☐ |
 | AC-11 | `npm run test`, changed-file lint, and `npm run build` are all green | test count up from the current 61; `eslint` clean on changed paths; build succeeds | ☐ |
@@ -88,7 +89,7 @@ One line per file. *What* changes, never *how*.
 | `frontend/public/imgs/Elizabeth/Guide/` | new art (I-1) |
 | `docs/tasks/index.md` | dashboard row and portfolio percentage |
 | `docs/component-inventory-frontend.md` | GuideTour entry |
-| `package.json` | only if D-1 picks a library |
+| `frontend/package.json` | add `driver.js` (D-1) |
 
 ## Not this task
 
@@ -111,14 +112,16 @@ One line per file. *What* changes, never *how*.
 - Mount the guide inside `Home` rather than `App` so it can reference the real
   menu DOM; render it in a portal / fixed layer so the scrim covers the logo and
   stars too.
-- Spotlight: read the target's `getBoundingClientRect()` and either drive the
-  chosen library or paint a `box-shadow`-based cutout — see D-1. The target entry
+- Spotlight: drive `driver.js` at the target element with its popover disabled,
+  so only the scrim cutout shows and its CSS is overridden to the Persona look
+  (D-1). The target entry
   gets a raised `z-index` and keeps its normal click handler, so "click SELECT
   MUSIC" is the same navigation the menu already does.
 - Lip-sync seam: portrait is `<div class="ElizabethPortrait">` holding one
   `<img>` per mouth frame; a `speaking` boolean (unused now) will cross-fade
   them, mirroring `ModeArtworkBlink`.
-- Persist the choice under one key (e.g. `rt.guide.seen`); wrap every
+- Persist the choice under one key (e.g. `rt.guide.seen`) holding a timestamp;
+  an entry older than 24h counts as absent and the prompt asks again. Wrap every
   `localStorage` access in try/catch — private windows throw.
 
 ## Verification
@@ -149,9 +152,9 @@ return to `/` and confirm nothing reappears. Repeat with
 
 | # | Question | Blocks | Owner | Answer |
 |---|---|---|---|---|
-| D-1 | Spotlight mechanism: add a tour library (`driver.js` — tiny, framework-agnostic, does the scrim cutout + popover) or hand-roll a `box-shadow` cutout from the target rect? Hand-rolling keeps full Persona styling control and adds no dependency. | AC-4, I-3 | Edupa | — *(recommend: hand-rolled)* |
-| D-2 | Persistence: remember the accept/decline forever, per browser session only, or re-ask after some time? | AC-8, I-4 | Edupa | — *(recommend: remember forever, one `localStorage` key)* |
-| D-3 | Which side does Elizabeth stand on — left (the emptier side of the menu) or right (mirroring the mode selector's Aigis)? | AC-5, I-5 | Edupa | — *(recommend: right)* |
+| D-1 | Spotlight mechanism: add a tour library (`driver.js` — tiny, framework-agnostic, does the scrim cutout + popover) or hand-roll a `box-shadow` cutout from the target rect? Hand-rolling keeps full Persona styling control and adds no dependency. | AC-4, I-3 | Edupa | **Answered 2026-09-01:** use `driver.js`, but only its highlight — popover disabled and its CSS overridden to the Persona styling. The only text on screen is Elizabeth's own dialogue box. |
+| D-2 | Persistence: remember the accept/decline forever, per browser session only, or re-ask after some time? | AC-8, I-4 | Edupa | **Answered 2026-09-01:** `localStorage`, expiring after 1 day (24h). |
+| D-3 | Which side does Elizabeth stand on — left (the emptier side of the menu) or right (mirroring the mode selector's Aigis)? | AC-5, I-5 | Edupa | **Answered 2026-09-01:** right — mirroring the mode selector's Aigis. |
 
 ## Log
 
@@ -160,3 +163,4 @@ Newest last. One line per real change of state.
 | Date | What happened |
 |---|---|
 | 2026-08-31 | Task written. Blocked on I-1 (Elizabeth art) and the three open decisions. Voice and lip-sync split out as a follow-up. |
+| 2026-09-01 | D-1/D-2/D-3 answered: `driver.js` highlight with the popover off, 24h `localStorage`, Elizabeth on the right. Branch `feat-elizabeth-guide` opened off `master`. Still blocked on I-1 — Elizabeth art. |
