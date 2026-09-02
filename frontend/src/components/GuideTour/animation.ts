@@ -66,7 +66,11 @@ const useGuideEntrance = (refs: GuideRefs, active: boolean) => {
  * The line is passed in rather than read back off the node: React renders the
  * same string, so the two always agree, and an effect that re-runs after the
  * node has already been emptied cannot capture an empty line and stall.
- * Reduced motion never empties it.
+ *
+ * The node is emptied from `onStart`, not up front, so the failure mode is the
+ * whole line rather than a blank box: GSAP is driven by `requestAnimationFrame`,
+ * which does not run in a hidden tab, and a reveal that never begins should
+ * leave the text readable. Reduced motion never empties it at all.
  */
 const useTypewriter = (
   lineRef: RefObject<HTMLElement | null>,
@@ -83,13 +87,15 @@ const useTypewriter = (
     }
 
     const cursor = { chars: 0 };
-    node.textContent = "";
 
     const tween = gsap.to(cursor, {
       chars: line.length,
       duration: line.length / TYPEWRITER_CHARS_PER_SECOND,
       delay: TYPEWRITER_DELAY,
       ease: "none",
+      onStart: () => {
+        node.textContent = "";
+      },
       onUpdate: () => {
         node.textContent = line.slice(0, Math.round(cursor.chars));
       },

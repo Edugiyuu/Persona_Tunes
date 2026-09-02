@@ -29,17 +29,11 @@ const DECLINE_LABEL = "NO, THANKS";
 
 const asset = (path: string) => publicAssetUrl(import.meta.env.BASE_URL, path);
 
-/** Mouth closed / open, each with an eyes-closed twin for the blink. The
- *  mouth pair is the seam the voice lines will drive later. */
+/** The lip-sync pair: mouth closed and mouth open. Both stay mounted so the
+ *  first spoken syllable never waits on a fetch. */
 const PORTRAIT_FRAMES = {
-  mouthClosed: {
-    eyesOpen: asset("imgs/Elizabeth/Guide/Elizabeth0.png"),
-    eyesClosed: asset("imgs/Elizabeth/Guide/ElizabethEyesClosed0.png"),
-  },
-  mouthOpen: {
-    eyesOpen: asset("imgs/Elizabeth/Guide/Elizabeth1.png"),
-    eyesClosed: asset("imgs/Elizabeth/Guide/ElizabethEyesClosed1.png"),
-  },
+  mouthClosed: asset("imgs/Elizabeth/Guide/Elizabeth0.png"),
+  mouthOpen: asset("imgs/Elizabeth/Guide/Elizabeth1.png"),
 } as const;
 
 const selectSoundUrl = asset("audios/UI/P4Select.wav");
@@ -109,8 +103,8 @@ const GuideTour = () => {
   const [phase, setPhase] = useState<GuidePhase>(() =>
     hasFreshAnswer() ? "off" : "prompt",
   );
-  // Reserved for the voice-line follow-up: the frames are already stacked, so
-  // flipping this cross-fades her mouth open. Nothing sets it yet.
+  // Reserved for the voice-line follow-up: both mouth frames are already
+  // stacked, so flipping this opens her mouth. Nothing sets it yet.
   const [speaking] = useState(false);
 
   const portraitRef = useRef<HTMLDivElement>(null);
@@ -218,27 +212,21 @@ const GuideTour = () => {
 
   return createPortal(
     <div className="GuideStage" data-speaking={speaking}>
-      {/* All four frames stay mounted and stacked, so neither a blink nor the
-          first spoken syllable ever waits on a fetch. */}
+      {/* Both mouth frames stay mounted and stacked; `speaking` picks which one
+          is painted. Nothing sets it yet — that is the voice-line seam. */}
       <div className="GuidePortrait" ref={portraitRef}>
         <div className="GuideFace" data-speaking={speaking}>
-          <div className="GuideMouth GuideMouthClosed">
-            <img alt="Elizabeth" className="GuideFrame" src={PORTRAIT_FRAMES.mouthClosed.eyesOpen} />
-            <img
-              alt=""
-              aria-hidden="true"
-              className="GuideFrame GuideBlink"
-              src={PORTRAIT_FRAMES.mouthClosed.eyesClosed}
-            />
-          </div>
-          <div aria-hidden="true" className="GuideMouth GuideMouthOpen">
-            <img alt="" className="GuideFrame" src={PORTRAIT_FRAMES.mouthOpen.eyesOpen} />
-            <img
-              alt=""
-              className="GuideFrame GuideBlink"
-              src={PORTRAIT_FRAMES.mouthOpen.eyesClosed}
-            />
-          </div>
+          <img
+            alt="Elizabeth"
+            className="GuideFrame GuideMouthClosed"
+            src={PORTRAIT_FRAMES.mouthClosed}
+          />
+          <img
+            alt=""
+            aria-hidden="true"
+            className="GuideFrame GuideMouthOpen"
+            src={PORTRAIT_FRAMES.mouthOpen}
+          />
         </div>
       </div>
 

@@ -123,16 +123,17 @@ describe('the running guide', () => {
     expect(highlighted).not.toHaveAttribute('aria-haspopup')
   })
 
-  it('stands Elizabeth up with every frame mounted (AC-5)', async () => {
+  it('stands Elizabeth up with both mouth frames mounted (AC-5)', async () => {
     render(<GuideTour />)
 
     await startGuide()
 
     expect(screen.getByAltText('Elizabeth')).toBeInTheDocument()
-    // Mouth closed / open, each with its eyes-closed twin: nothing is fetched
-    // on the first blink or the first spoken syllable.
-    expect(document.querySelectorAll('.GuideFrame')).toHaveLength(4)
-    expect(document.querySelectorAll('.GuideBlink')).toHaveLength(2)
+    // Mouth closed and mouth open, nothing else: the first spoken syllable is
+    // never waiting on a fetch, and there is no blink layer.
+    expect(document.querySelectorAll('.GuideFrame')).toHaveLength(2)
+    expect(document.querySelectorAll('.GuideMouthClosed')).toHaveLength(1)
+    expect(document.querySelectorAll('.GuideMouthOpen')).toHaveLength(1)
   })
 
   it('starts with her mouth closed, the lip-sync seam unused (AC-5)', async () => {

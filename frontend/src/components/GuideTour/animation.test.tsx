@@ -92,8 +92,19 @@ describe('guide motion with motion allowed', () => {
     expect(mockedGsap.to).toHaveBeenCalledTimes(1)
   })
 
-  it('empties the line so the typewriter has something to fill', () => {
+  it('leaves the line readable until the reveal actually starts', () => {
+    // GSAP runs on requestAnimationFrame, which a hidden tab never fires. A
+    // reveal that never begins must not leave an empty box behind.
     const { container } = render(<Harness active />)
+
+    expect(container.querySelector('.GuideLine')).toHaveTextContent(LINE)
+  })
+
+  it('empties the line only once the tween starts', () => {
+    const { container } = render(<Harness active />)
+    const vars = mockedGsap.to.mock.calls[0][1] as { onStart: () => void }
+
+    vars.onStart()
 
     expect(container.querySelector('.GuideLine')).toHaveTextContent('')
   })

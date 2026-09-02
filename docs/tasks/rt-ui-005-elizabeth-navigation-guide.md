@@ -95,8 +95,9 @@ One line per file. *What* changes, never *how*.
 
 - Elizabeth's **voice lines** (audio playback, timing, subtitles sync).
 - The **lip-sync** open/closed-mouth frame animation. The portrait is built as a
-  stacked frame set (like the Aigis blink in `ModeSelector`) with a `speaking`
-  state that currently does nothing, so the frames drop in later.
+  stacked frame pair — `Elizabeth0` closed, `Elizabeth1` open — with a `speaking`
+  state that currently does nothing, so the frames drop in later. There is no
+  blink: the `ElizabethEyesClosed*` art stays unused for now, at Edupa's call.
 - A **multi-step** tour. This guide has one step: click "SELECT MUSIC". Extra
   steps (what the music list does, the mode selector, recording) are a later
   task.
@@ -165,3 +166,4 @@ Newest last. One line per real change of state.
 | 2026-08-31 | Task written. Blocked on I-1 (Elizabeth art) and the three open decisions. Voice and lip-sync split out as a follow-up. |
 | 2026-09-01 | D-1/D-2/D-3 answered: `driver.js` highlight with the popover off, 24h `localStorage`, Elizabeth on the right. Branch `feat-elizabeth-guide` opened off `master`. Still blocked on I-1 — Elizabeth art. |
 | 2026-09-02 | Sprites delivered, including an unrequested eyes-closed pair. D-3 revised to **left** mid-implementation. Built: opt-in prompt, `driver.js` highlight with the popover off, four-frame portrait with a CSS blink and an unused `speaking` seam, typed dialogue line, 24h `localStorage`. 37 new tests (61 → 98), lint clean, build green. Browser-verified at 1440 / 768 / 360: no horizontal scroll, the spotlit entry hit-tests clickable and navigates to `/musics`, and returning to `/` reopens nothing. Done, 11/11. |
+| 2026-09-02 | Review pass with Edupa. Dropped the blink I had invented from the eyes-closed art — only the `Elizabeth0`/`Elizabeth1` mouth pair is wired, and the eyes-closed frames stay unused. Brought her back to the left edge (`left: 0`) after the `-12vw` crop pushed her off-screen. Restyled the dialogue box and the prompt to the Persona 3 Reload reference Edupa supplied: navy lozenge, cyan keyline and glow, small speaker tab, tail pointing at her, and a blue rim light on the portrait — no magenta left in the guide. The typed line now empties from the tween's `onStart`, so a hidden tab (where `requestAnimationFrame` never fires) shows the whole line instead of a blank box. 100 tests pass. |

@@ -28,12 +28,12 @@
     width: min(560px, 100%);
     box-sizing: border-box;
     padding: 28px 32px 24px;
-    background: #0b0b14;
-    border: 2px solid #9fd8ff;
-    /* Angular corners, like the menu plates — no rounded dialog anywhere in
-       this UI. */
-    clip-path: polygon(0 0, 100% 0, 100% 82%, 96% 100%, 0 100%, 0 18%);
-    box-shadow: -10px 10px 0 rgba(229, 18, 46, 0.55);
+    background: linear-gradient(180deg, #12276e 0%, #0a1748 55%, #050d2e 100%);
+    border: 2px solid #6fc2ff;
+    border-radius: 10px;
+    box-shadow:
+        0 0 24px rgba(60, 130, 255, 0.45),
+        inset 0 1px 0 rgba(143, 210, 255, 0.35);
 }
 
 .GuidePromptTitle {
@@ -44,12 +44,12 @@
     font-size: 34px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    text-shadow: -0.01em 0.02em 0 #e5122e;
+    text-shadow: 0 2px 6px rgba(4, 10, 60, 0.85);
 }
 
 .GuidePromptBody {
     margin: 0 0 22px;
-    color: #9fd8ff;
+    color: #dbe9ff;
     font-family: 'Rodin DB', 'Rodin', sans-serif;
     font-size: 18px;
     line-height: 1.5;
@@ -63,9 +63,9 @@
 
 .GuidePromptButton {
     padding: 8px 22px;
-    background: transparent;
-    border: 2px solid #9fd8ff;
-    color: #9fd8ff;
+    background: rgba(10, 25, 90, 0.6);
+    border: 2px solid #6fc2ff;
+    color: #d7ecff;
     font-family: 'Rodin EB', 'Rodin', sans-serif;
     font-style: italic;
     font-size: 20px;
@@ -81,8 +81,8 @@
 .GuidePromptButton:hover,
 .GuidePromptButton:focus-visible {
     background: #ffffff;
-    color: #0b0b14;
-    text-shadow: -0.01em 0.02em 0 #e5122e;
+    color: #0a1748;
+    text-shadow: none;
 }
 
 .GuidePromptButton:focus-visible {
@@ -90,10 +90,11 @@
     outline-offset: 6px;
 }
 
+/* The default answer reads as the lit one, in the same blue as the box. */
 .GuidePromptAccept {
-    border-color: #ff4d9e;
-    color: #ffffff;
-    background: #ff4d9e;
+    border-color: #ffffff;
+    color: #0a1748;
+    background: #ffffff;
 }
 
 /* --- the running guide ------------------------------------------------- */
@@ -108,14 +109,12 @@
     overflow: hidden;
 }
 
-/* D-3: she stands on the left, on the emptier side of the menu. Framed slightly
-   off the edge, the way Persona crops a standing portrait, so she leans into the
-   scene without pushing into the menu column. */
+/* D-3: she stands on the left, on the emptier side of the menu. */
 .GuidePortrait {
     position: absolute;
-    left: -12vw;
+    left: 0;
     bottom: 0;
-    height: 78vh;
+    height: 82vh;
     /* The frames are absolutely positioned, so this box has no in-flow child to
        take its width from. The source art is square, so state it — that is what
        keeps her arrival from shifting anything. */
@@ -129,14 +128,8 @@
     inset: 0;
 }
 
-/* Mouth closed today, mouth open once the voice lines land. Both states stay
+/* Mouth closed today, mouth open once the voice lines land. Both frames stay
    mounted; `data-speaking` picks which one is painted. */
-.GuideMouth {
-    position: absolute;
-    inset: 0;
-    transition: opacity 0.09s linear;
-}
-
 .GuideMouthOpen {
     opacity: 0;
 }
@@ -156,24 +149,15 @@
     height: 100%;
     object-fit: contain;
     object-position: bottom left;
-    filter: drop-shadow(-18px 0 0 rgba(159, 216, 255, 0.35));
-}
-
-/* Closed eyes sit on top at zero opacity and flash in — same two-blinks-then-
-   pause cadence as Aigis, so the two screens feel like one character system. */
-.GuideBlink {
-    opacity: 0;
-    animation: GuideBlink 7s steps(1, end) infinite;
-}
-
-@keyframes GuideBlink {
-    0%, 38% { opacity: 0; }
-    41.8%, 42% { opacity: 1; }
-    42.5%, 43.5% { opacity: 0; }
-    44%, 45% { opacity: 1; }
-    45.5%, 89% { opacity: 0; }
-    89.5%, 90% { opacity: 1; }
-    90.5%, 100% { opacity: 0; }
+    transition: opacity 0.09s linear;
+    /* Four offsets build an even keyline; one shadow would only light one side.
+       Bright, so it reads as a rim light rather than a muddy shadow. */
+    filter:
+        drop-shadow(3px 0 0 #3a6bff)
+        drop-shadow(-3px 0 0 #3a6bff)
+        drop-shadow(0 3px 0 #3a6bff)
+        drop-shadow(0 -3px 0 #3a6bff)
+        drop-shadow(0 0 14px rgba(70, 150, 255, 0.75));
 }
 
 /* Opposite her, so the plate never lands on her face. */
@@ -186,34 +170,58 @@
     margin-left: auto;
 }
 
-/* Name tag, overlapping the top edge of the plate the way Persona stacks its
-   speaker label. */
+/* A small tab tucked into the top-left corner of the box, the way the game
+   labels a speaker — a caption, not a button. */
 .GuideSpeaker {
     display: inline-block;
     position: relative;
     z-index: 1;
-    margin-left: 18px;
-    margin-bottom: -10px;
-    padding: 4px 20px;
-    background: #ff4d9e;
-    color: #0b0b14;
+    margin-left: 26px;
+    margin-bottom: -8px;
+    padding: 1px 14px;
+    background: #061444;
+    border: 1px solid rgba(127, 208, 255, 0.75);
+    border-radius: 3px;
+    color: #8fd2ff;
     font-family: 'Rodin EB', 'Rodin', sans-serif;
     font-style: italic;
-    font-size: 22px;
-    letter-spacing: 2px;
+    font-size: 14px;
+    letter-spacing: 3px;
     text-transform: uppercase;
     transform: skewX(-12deg);
 }
 
+/* The blue lozenge from Persona 3 Reload: bright blue fill, thin cyan keyline,
+   an outward glow, and a tail pointing back at whoever is speaking. */
 .GuideDialoguePlate {
-    padding: 22px 28px;
-    background: rgba(11, 11, 20, 0.94);
-    border: 2px solid #9fd8ff;
-    clip-path: polygon(0 0, 100% 0, 100% 78%, 97% 100%, 0 100%, 0 14%);
+    position: relative;
+    padding: 24px 34px;
+    background: linear-gradient(180deg, #12276e 0%, #0a1748 55%, #050d2e 100%);
+    border: 2px solid #6fc2ff;
+    border-radius: 10px;
+    box-shadow:
+        0 0 24px rgba(60, 130, 255, 0.45),
+        inset 0 1px 0 rgba(143, 210, 255, 0.35);
+    transform: skewX(-3deg);
+}
+
+/* Elizabeth stands to the left, so the tail points left. */
+.GuideDialoguePlate::before {
+    content: '';
+    position: absolute;
+    left: -23px;
+    top: 30px;
+    width: 0;
+    height: 0;
+    border: 13px solid transparent;
+    border-right-color: #12276e;
+    filter: drop-shadow(-2px 0 0 #6fc2ff);
 }
 
 .GuideLine {
     margin: 0;
+    /* Cancels the plate's lean, so the text itself stays upright. */
+    transform: skewX(3deg);
     /* Two lines' worth of room is reserved up front, so the typewriter cannot
        reflow the plate as it fills. */
     min-height: 2.9em;
@@ -244,14 +252,8 @@
 
 @media (prefers-reduced-motion: reduce) {
     .GuidePromptButton,
-    .GuideMouth {
+    .GuideFrame {
         transition: none;
-    }
-
-    /* Eyes stay open rather than frozen shut. */
-    .GuideBlink {
-        animation: none;
-        opacity: 0;
     }
 
     .driver-active-element {
@@ -264,10 +266,8 @@
 }
 
 @media (max-width: 1060px) {
-    /* Less menu to stay clear of, so she comes back towards the edge. */
     .GuidePortrait {
-        left: -6vw;
-        height: 68vh;
+        height: 70vh;
         max-width: 52vw;
     }
 
@@ -288,7 +288,6 @@
     /* The plate now spans the full width, so she stands clear above it rather
        than behind it — otherwise the box swallows everything but her hat. */
     .GuidePortrait {
-        left: 0;
         bottom: 22vh;
         height: 46vh;
         max-width: 60vw;
@@ -299,6 +298,12 @@
         right: 3vw;
         bottom: 4vh;
         margin-left: 0;
+    }
+
+    /* She stands above the box at this width, not beside it, so a tail pointing
+       left would aim at nothing — and it lands off-screen besides. */
+    .GuideDialoguePlate::before {
+        display: none;
     }
 
     .GuideDialoguePlate {

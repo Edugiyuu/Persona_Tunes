@@ -33,8 +33,19 @@ describe('GuideTour CSS contract', () => {
   })
 
   it('stands her on the left, per D-3 (AC-5)', () => {
-    expect(css).toMatch(/\.GuidePortrait\s*{[^}]*left:/)
+    expect(css).toMatch(/\.GuidePortrait\s*{[^}]*left:\s*0/)
     expect(css).not.toMatch(/\.GuidePortrait\s*{[^}]*right:/)
+  })
+
+  it('paints one mouth frame at a time off `data-speaking` (AC-5)', () => {
+    expect(css).toMatch(/\.GuideMouthOpen\s*{[^}]*opacity:\s*0/)
+    expect(css).toMatch(
+      /\.GuideFace\[data-speaking='true'\]\s\.GuideMouthClosed\s*{[^}]*opacity:\s*0/,
+    )
+  })
+
+  it('has no blink: the eyes-closed art is not wired up', () => {
+    expect(css).not.toContain('GuideBlink')
   })
 
   it('puts the dialogue box on the side she is not standing on (AC-10)', () => {
@@ -49,17 +60,10 @@ describe('GuideTour CSS contract', () => {
     expect(css).toMatch(/\.driver-popover\s*{[^}]*display:\s*none\s*!important/)
   })
 
-  it('drives the blink from a keyframed animation on the closed-eye frame', () => {
-    expect(css).toContain('@keyframes GuideBlink')
-    expect(css).toMatch(/\.GuideBlink\s*{[^}]*animation:\s*GuideBlink/)
-  })
-
-  it('stops every loop under reduced motion, eyes left open (AC-9)', () => {
+  it('stops every loop and transition under reduced motion (AC-9)', () => {
     const reduced = mediaBlock('(prefers-reduced-motion: reduce)')
 
-    expect(reduced).toMatch(/\.GuideBlink\s*{[^}]*animation:\s*none/)
-    // opacity 0 on the closed-eye frame is what "eyes open" means here.
-    expect(reduced).toMatch(/\.GuideBlink\s*{[^}]*opacity:\s*0/)
+    expect(reduced).toMatch(/\.GuideFrame\s*{[^}]*transition:\s*none/)
     expect(reduced).toMatch(/\.driver-active-element\s*{[^}]*animation:\s*none/)
     expect(reduced).toMatch(
       /\.driver-fade\s\.driver-overlay\s*{[^}]*animation:\s*none/,
