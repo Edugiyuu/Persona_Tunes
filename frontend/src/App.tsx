@@ -4,6 +4,8 @@ import './App.css'
 import { createStartupManifest, publicAssetUrl } from './bootstrap/startupManifest'
 import type { StartupResource } from './bootstrap/startupManifest'
 import { useAppBootstrap } from './bootstrap/useAppBootstrap'
+import GuideTour from './components/GuideTour/GuideTour'
+import { GuideTourProvider } from './components/GuideTour/GuideTourProvider'
 import LoadingScreen from './components/loadingScreen/loadingScreen'
 import RouteErrorBoundary from './components/RouteErrorBoundary/RouteErrorBoundary'
 
@@ -64,32 +66,35 @@ function App({
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       {bootstrap.canRenderRoutes ? (
-        <RouteErrorBoundary>
-          <Suspense
-            fallback={
-              <p aria-live="polite" role="status">
-                Loading screen...
-              </p>
-            }
-          >
-            <Routes>
-              <Route
-                element={
-                  <Home
-                    unavailableStartupResourceIds={
-                      unavailableStartupResourceIds
-                    }
-                  />
-                }
-                path="/"
-              />
-              <Route element={<SelectMusic />} path="/musics" />
-              <Route element={<SingMusic />} path="/sing-music/:id" />
-              <Route element={<PatchNotes />} path="/patch-notes" />
-              <Route element={<WorkInProgress />} path="/work-in-progress" />
-            </Routes>
-          </Suspense>
-        </RouteErrorBoundary>
+        <GuideTourProvider>
+          <RouteErrorBoundary>
+            <Suspense
+              fallback={
+                <p aria-live="polite" role="status">
+                  Loading screen...
+                </p>
+              }
+            >
+              <Routes>
+                <Route
+                  element={
+                    <Home
+                      unavailableStartupResourceIds={
+                        unavailableStartupResourceIds
+                      }
+                    />
+                  }
+                  path="/"
+                />
+                <Route element={<SelectMusic />} path="/musics" />
+                <Route element={<SingMusic />} path="/sing-music/:id" />
+                <Route element={<PatchNotes />} path="/patch-notes" />
+                <Route element={<WorkInProgress />} path="/work-in-progress" />
+              </Routes>
+            </Suspense>
+          </RouteErrorBoundary>
+          <GuideTour />
+        </GuideTourProvider>
       ) : (
         <LoadingScreen
           canContinue={bootstrap.canContinue}

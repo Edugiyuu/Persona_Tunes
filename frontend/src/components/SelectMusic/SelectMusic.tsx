@@ -46,12 +46,12 @@ const SelectMusic = () => {
   return (
     <div className="SelectMusic">
       <div className="AllMusics">
-        {musics.map((music) => (
+        {musics.map((music, index) => (
           <div key={music._id} className="Music">
             <img src={`${import.meta.env.BASE_URL}/star.svg`} alt="music icon" />
             <div>
               <p>{music.name}</p>
-              <button onClick={() => { setSelectedMusic(music); PlayAudio(`${import.meta.env.BASE_URL}/audios/UI/P4Hover.wav`, 0.7); }}>VIEW MUSIC..</button>
+              <button data-guide-target={index === 0 ? "first-music" : undefined} onClick={() => { setSelectedMusic(music); PlayAudio(`${import.meta.env.BASE_URL}/audios/UI/P4Hover.wav`, 0.7); }}>VIEW MUSIC..</button>
             </div>
           </div>
         ))}

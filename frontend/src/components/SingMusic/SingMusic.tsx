@@ -9,6 +9,7 @@ import AutoVoiceRecorder from "../AudioRecorder/AutoVoiceRecorder";
 import { triggerDialogAnimation, triggerBackDialogAnimation, TPDialogBack, triggerBackDialogAnimationMode, CutInAnimation, LyricsAnimation } from "./animations";
 import { PlayAudio } from "../../utils/PlayAudio";
 import MusicEnded from "../MusicEnded/MusicEnded";
+import { useGuideTour } from "../GuideTour/guideContext";
 
 interface Music {
   musicUrl: string;
@@ -45,6 +46,8 @@ function SingMusic() {
     return videos[Math.floor(Math.random() * videos.length)];
   });
   const { id } = useParams();
+  // The guide keeps the song silent until it has finished the briefing (AC-8).
+  const { holdsPlayback } = useGuideTour();
 
 
   useEffect(() => {
@@ -124,7 +127,7 @@ function SingMusic() {
           playsInline
         />
       )}
-      {audioUrl && (
+      {audioUrl && !holdsPlayback && (
         <AudioPlayer
           src={audioUrl}
           onListen={handleTimeUpdate}

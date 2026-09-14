@@ -1,0 +1,277 @@
+/*
+ * Placeholder LOOK for the guide.
+ *
+ * The visual pass belongs to the owner, so this file does the least that makes
+ * the tour readable: it places the three pieces, gives the two text boxes just
+ * enough contrast to be read over the scrim, and sizes Elizabeth so she reads
+ * as a standing portrait instead of a full-bleed image. No palette, no type, no
+ * chrome beyond the hairline that tells a box from the page — replacing this
+ * file wholesale should not need a single edit next door.
+ *
+ * `spotlight.css` stays mechanics-only; nothing here belongs in it.
+ *
+ * The one part of this file that is not a placeholder is the talk animation at
+ * the bottom: it is what `data-guide-speaking` was left in the markup for.
+ */
+
+/* One measure drives the whole guide: how big she is, and therefore how far the
+   dialogue has to stand back to clear her. THIS is the line that makes her
+   bigger or smaller — nothing else needs touching.
+   The two fractions under it are measured off the frames themselves: her ink
+   fills only 0.213 to 0.951 of the square she is drawn in, so the square always
+   runs bigger than the figure and the empty fifth is hung off-screen. */
+.GuideLayer {
+    --guide-portrait-size: min(81vh, 50vw);
+    --guide-art-left: 0.213;
+    --guide-art-right: 0.951;
+    /* How far her ink stands off the edge of the screen. Hers alone — the
+       dialogue keeps its own left, so raising this walks her towards the text
+       rather than carrying the box along. */
+    --guide-portrait-margin: 1rem;
+    /* How far her feet fall past the bottom edge of the box she stands on. At
+       the bottom end that is just the box's own inset; naming it here is what
+       lets the top end mirror it. */
+    --guide-portrait-foot: 1rem;
+}
+
+/* --- The opening prompt ---------------------------------------------- */
+
+.GuidePrompt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: min(32rem, calc(100vw - 2rem));
+    padding: 1rem 1.25rem;
+    background: var(--guide-panel-bg, rgba(8, 10, 24, 0.92));
+    color: var(--guide-panel-fg, #fff);
+    border: 1px solid var(--guide-panel-border, rgba(255, 255, 255, 0.35));
+}
+
+.GuidePromptTitle {
+    margin: 0 0 0.75rem;
+}
+
+/* --- The dialogue box ------------------------------------------------- */
+
+/* Layout only. The two things that carry a look are its children, and they
+   stack: the name plate, then the line. */
+.GuideDialogue {
+    position: absolute;
+    bottom: 1rem;
+    right: var(--guide-dialogue-right, 25%);
+    /* Its left end is hers, not whatever the window has left over: parked a
+       little inside her silhouette so the two always touch — she is drawn on
+       top, so the overlap is hidden and the gap can never open up, at any
+       window size. */
+    left: calc(var(--guide-portrait-size) * var(--guide-dialogue-overlap, 0.20));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* `spotlight.css` hands this element its clicks, but as a bare wrapper it
+       now covers ground it does not draw on — so it passes them down to the two
+       boxes instead of swallowing them. */
+    pointer-events: none;
+    /* Under her: where they cross she is drawn over the boxes, the way a Persona
+       portrait overlaps its text box. */
+    z-index: 1;
+}
+
+/* Set by GuideTour.tsx when the box would otherwise come to rest on the
+   spotlit control. It does not simply take the same inset at the other end:
+   Elizabeth goes up with it, and at this end she has no room above her to rise
+   into, so SHE takes the ceiling and the box is hung off her feet instead —
+   the bottom arrangement, mirrored. `--guide-dialogue-height` is measured in
+   GuideTour.tsx because the box is as tall as the line it is holding.
+   The inset is the floor of that sum, for a line long enough that hanging the
+   box off her feet would push it off the top of the screen. */
+.GuideDialogue[data-guide-place='top'] {
+    bottom: auto;
+    top: max(
+        var(--guide-dialogue-top-inset, 1.5rem),
+        calc(
+            var(--guide-portrait-size) - var(--guide-portrait-foot) -
+                var(--guide-dialogue-height, 0px)
+        )
+    );
+}
+
+.GuideSpeaker,
+.GuideDialogueBox {
+    pointer-events: auto;
+    background: var(--guide-panel-bg, rgba(8, 10, 24, 0.92));
+    color: var(--guide-panel-fg, #fff);
+    border: 1px solid var(--guide-panel-border, rgba(255, 255, 255, 0.35));
+}
+
+/* Its own plate, only as wide as the name. It stands at her shoulder, where her
+   silhouette ends at 0.67 of her width at the most — so it needs far less of an
+   inset than the line below it, which has to clear the hand reaching out at
+   0.95. Measured off the frames themselves; `--guide-speaker-inset` moves it
+   without touching the line. */
+.GuideSpeaker {
+    margin: 0 0 0
+        var(--guide-speaker-inset, calc(var(--guide-portrait-size) * 0.25));
+    padding: 0.3rem 0.9rem;
+}
+
+.GuideDialogueBox {
+    align-self: stretch;
+    padding: 40px 30px 40px 1px;
+    /* She stands on the box's left end and the text begins past her, the way a
+       Persona portrait sits on its text box. */
+    padding-left: calc(var(--guide-portrait-size) * 0.43);
+}
+
+.GuideLine {
+    margin: 0;
+    line-height: 1.45;
+}
+
+.GuideDialogueActions {
+    margin-top: 0.75rem;
+}
+
+.GuidePromptActions,
+.GuideDialogueActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* --- Elizabeth -------------------------------------------------------- */
+
+.GuidePortrait {
+    position: absolute;
+    bottom: 0;
+    /* Square, because the source is: `object-fit: contain` draws the image at
+       the SHORTER of the two sides, so a tall narrow box would only shrink her.
+       Both frames are absolutely positioned, so the box has no in-flow child to
+       size it — state the square. */
+    height: var(--guide-portrait-size);
+    width: var(--guide-portrait-size);
+    user-select: none;
+    /* Over the dialogue box. She is `pointer-events: none` (spotlight.css), so
+       standing in front of the box costs it none of its clicks. */
+    z-index: 2;
+}
+
+/* The square's empty margin hangs off the edge of the screen, so her ink starts
+   at the edge instead of a fifth of the way in — which is what buys her the
+   extra size without pushing the text any further right. */
+.GuidePortrait[data-guide-side='right'] {
+    right: calc(
+        var(--guide-portrait-margin) +
+            var(--guide-portrait-size) * (var(--guide-art-right) - 1)
+    );
+}
+
+.GuidePortrait[data-guide-side='left'] {
+    left: calc(
+        var(--guide-portrait-margin) -
+            var(--guide-portrait-size) * var(--guide-art-left)
+    );
+}
+
+/* When the box moves to the top end to clear the spotlit control, she goes with
+   it — left at the floor she comes away from her own dialogue and stands on the
+   control the step is pointing at, which is the one place she must not be.
+   She takes the ceiling exactly as she takes the floor at the other end; the
+   box comes down to her feet rather than her hanging off the box, because the
+   box is the shorter of the two and only one of them has room to move. */
+.GuideLayer[data-guide-place='top'] .GuidePortrait {
+    bottom: auto;
+    top: 0;
+}
+
+/* The two mouth frames are identically framed, so stacking them in the same box
+   swaps the mouth without moving anything else. */
+.GuidePortraitFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+}
+
+/* Mouth closed (Elizabeth0) is the base frame; mouth open (Elizabeth1) sits on
+   top at zero opacity and flashes in while she is speaking. `steps(1, end)`
+   keeps it a frame swap rather than a cross-fade, and the beats are uneven
+   because an even one reads like a metronome rather than a person talking. */
+.GuidePortraitSpeaking {
+    opacity: 0;
+}
+
+.GuidePortraitSpeaking[data-guide-speaking='true'] {
+    animation: GuidePortraitTalk 0.62s steps(1, end) infinite;
+}
+
+@keyframes GuidePortraitTalk {
+    0%, 20% { opacity: 1; }
+    24%, 42% { opacity: 0; }
+    46%, 58% { opacity: 1; }
+    62%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* Her mouth stays shut rather than frozen open. */
+    .GuidePortraitSpeaking[data-guide-speaking='true'] {
+        animation: none;
+        opacity: 0;
+    }
+}
+
+/* --- Narrow screens ---------------------------------------------------- */
+
+/* The same arrangement, smaller. Below the app's own 768px breakpoint she
+   cannot take a third of the width and still leave a column worth reading, and
+   the box has to run the full width instead of stopping at 25% — the mode
+   selector widens its entries to 70% of a screen this size, but they sit above
+   the box rather than beside it. */
+@media (max-width: 768px) {
+    .GuideLayer {
+        --guide-portrait-size: min(40vh, 54vw);
+        --guide-portrait-margin: 0.75rem;
+        --guide-portrait-foot: 0.75rem;
+    }
+
+    .GuideDialogue {
+        bottom: 0.75rem;
+        left: 0.75rem;
+        right: 0.75rem;
+    }
+
+    .GuideDialogue {
+        --guide-dialogue-top-inset: 0.75rem;
+    }
+
+    .GuideDialogueBox {
+        padding: 0.9rem 0.9rem 0.9rem 1px;
+        padding-left: calc(var(--guide-portrait-size) * 0.82);
+    }
+
+    .GuideSpeaker {
+        margin-left: var(
+            --guide-speaker-inset,
+            calc(var(--guide-portrait-size) * 0.52)
+        );
+    }
+
+    /* A narrow column turns a long line into a tall box, and a tall box climbs
+       into the page. Capped, it scrolls instead of growing — and on the mode
+       step the cap is tighter still, because its two entries come down to
+       within 200px of the floor on a screen this size. */
+    .GuideDialogueBox {
+        max-height: 34vh;
+        overflow-y: auto;
+    }
+
+    .GuideLayer[data-guide-step='mode'] .GuideDialogueBox {
+        max-height: 22vh;
+    }
+
+    .GuidePrompt {
+        padding: 0.9rem 1rem;
+    }
+}

@@ -65,6 +65,57 @@
   gap: 10px;
 }
 
+/* Tablet / small-laptop band: the ViewMusic panel is anchored to the right,
+   so the list has to give up width instead of sliding underneath it. */
+@media (max-width: 1124px) and (min-width: 669px) {
+  .AllMusics {
+    width: 40%;
+  }
+
+  .Music {
+    margin-left: 3%;
+    gap: 14px;
+  }
+
+  .Music p {
+    font-size: 19px;
+  }
+
+  .Music img {
+    height: 110px;
+    width: 110px;
+  }
+
+  .Music button {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 669px) {
+  .AllMusics {
+    width: 36%;
+  }
+
+  .Music {
+    gap: 10px;
+  }
+
+  .Music p {
+    font-size: 16px;
+  }
+
+  .Music img {
+    height: 80px;
+    width: 80px;
+  }
+
+  .Music button {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
 @media (max-width: 668px) {
   .Music button {
     font-size: 15px;

@@ -1,0 +1,86 @@
+/*
+ * Spotlight MECHANICS only (RT-UI-005, D-1 revised).
+ *
+ * This is the one stylesheet the guide ships, and it exists only because
+ * dropping driver.js moved its scrim and cutout in here. It covers the screen,
+ * cuts a hole around the tracked element, and lets that hole pass clicks
+ * through — nothing else. There is deliberately no look here: no palette, no
+ * portrait placement, no dialogue-box styling. Every value sits behind a
+ * `--guide-*` custom property, so the visual pass overrides it from its own
+ * file without editing this one.
+ *
+ * The geometry (`--guide-rect-*`) is written onto the scrim by GuideTour.tsx
+ * whenever the target's rect changes.
+ *
+ * The hole is a `clip-path`, so it is a real hole: the scrim both paints over
+ * the page and swallows clicks meant for it, while the cut-out region hits the
+ * spotlit control underneath. A `clip-path` cannot round the hole's corners —
+ * if the visual pass wants a rounded or glowing cutout, swap this rule for a
+ * target-sized element wearing a large spread `box-shadow`.
+ */
+
+.GuideScrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--guide-scrim-layer, 40);
+  background: var(--guide-scrim-color, rgba(0, 0, 0, 0.72));
+}
+
+.GuideScrim[data-guide-cutout='true'] {
+  --guide-cut-x0: calc(
+    var(--guide-rect-left, 0px) - var(--guide-cutout-padding, 8px)
+  );
+  --guide-cut-y0: calc(
+    var(--guide-rect-top, 0px) - var(--guide-cutout-padding, 8px)
+  );
+  --guide-cut-x1: calc(
+    var(--guide-cut-x0) + var(--guide-rect-width, 0px) +
+      var(--guide-cutout-padding, 8px) * 2
+  );
+  --guide-cut-y1: calc(
+    var(--guide-cut-y0) + var(--guide-rect-height, 0px) +
+      var(--guide-cutout-padding, 8px) * 2
+  );
+
+  clip-path: polygon(
+    evenodd,
+    0 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 0,
+    var(--guide-cut-x0) var(--guide-cut-y0),
+    var(--guide-cut-x1) var(--guide-cut-y0),
+    var(--guide-cut-x1) var(--guide-cut-y1),
+    var(--guide-cut-x0) var(--guide-cut-y1),
+    var(--guide-cut-x0) var(--guide-cut-y0)
+  );
+}
+
+/* The spotlit control stays a control, above the scrim. */
+[data-guide-highlighted='true'] {
+  position: relative;
+  z-index: var(--guide-target-layer, 41);
+}
+
+/* The guide's own chrome sits above the scrim. Where each piece sits inside
+   the layer is the visual pass's call, so the layer itself lets clicks fall
+   through and only the chrome takes them. */
+.GuideLayer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--guide-chrome-layer, 42);
+  pointer-events: none;
+}
+
+.GuidePrompt,
+.GuideDialogue {
+  pointer-events: auto;
+}
+
+/* The portrait is decoration and must never intercept a click meant for the
+   spotlit control — it is a full-bleed image until the visual pass sizes and
+   places it. */
+.GuidePortrait {
+  pointer-events: none;
+}
