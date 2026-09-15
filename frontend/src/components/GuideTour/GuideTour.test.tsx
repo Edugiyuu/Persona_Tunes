@@ -72,13 +72,16 @@ const MusicListPage = ({ songs = 1 }: { songs?: number }) => {
         </div>
       ))}
       {selected !== null && (
-        <button
-          data-guide-target="start-music"
-          onClick={() => navigate('/sing-music/abc')}
-          type="button"
-        >
-          START!
-        </button>
+        <div data-guide-target="music-panel">
+          <p>Difficulty: A</p>
+          <button
+            data-guide-target="start-music"
+            onClick={() => navigate('/sing-music/abc')}
+            type="button"
+          >
+            START!
+          </button>
+        </div>
       )}
     </div>
   )
@@ -119,16 +122,46 @@ const accept = () => fireEvent.click(screen.getByText('YES, PLEASE'))
 const highlighted = (): HTMLElement | null =>
   document.querySelector('[data-guide-highlighted="true"]')
 
+/** Every control the current step lights, in the order the page renders them. */
+const allHighlighted = (): string[] =>
+  [...document.querySelectorAll<HTMLElement>('[data-guide-highlighted="true"]')]
+    .map((element) => element.dataset.guideTarget ?? '')
+
+/** Dismisses a step Elizabeth advances herself, the way a player would. */
+const advanceBox = () =>
+  fireEvent.click(document.querySelector('.GuideDialogueBox') as HTMLElement)
+
 /** Walks the tour from the prompt to the step named. */
-const walkTo = (step: 'music-list' | 'music-detail' | 'mode' | 'briefing') => {
+const walkTo = (
+  step:
+    | 'music-list'
+    | 'music-detail'
+    | 'music-start'
+    | 'mode-intro'
+    | 'mode-sing-together'
+    | 'mode-karaoke'
+    | 'mode'
+    | 'briefing'
+    | 'briefing-score',
+) => {
   accept()
   fireEvent.click(screen.getByText('SELECT MUSIC'))
   if (step === 'music-list') return
   fireEvent.click(screen.getByText('VIEW MUSIC 0'))
   if (step === 'music-detail') return
+  advanceBox()
+  if (step === 'music-start') return
   fireEvent.click(screen.getByText('START!'))
+  if (step === 'mode-intro') return
+  advanceBox()
+  if (step === 'mode-sing-together') return
+  advanceBox()
+  if (step === 'mode-karaoke') return
+  advanceBox()
   if (step === 'mode') return
   fireEvent.click(screen.getByText('Karaoke'))
+  if (step === 'briefing') return
+  advanceBox()
 }
 
 beforeEach(() => {
@@ -265,11 +298,44 @@ describe('the guided run', () => {
 
     fireEvent.click(screen.getByText('VIEW MUSIC 0'))
     expect(screen.getByText(lineOf('music-detail'))).toBeInTheDocument()
+    // The whole panel first — she is reading it out, not pointing at a control.
+    expect(highlighted()).toHaveAttribute('data-guide-target', 'music-panel')
+
+    advanceBox()
+    expect(screen.getByText(lineOf('music-start'))).toBeInTheDocument()
     expect(highlighted()).toHaveAttribute('data-guide-target', 'start-music')
 
     fireEvent.click(screen.getByText('START!'))
+    expect(screen.getByText(lineOf('mode-intro'))).toBeInTheDocument()
+    // Nothing is lit while she says there are two of them.
+    expect(highlighted()).toBeNull()
+  })
+
+  it('lights each mode as she describes it, without offering the press', () => {
+    renderApp()
+
+    walkTo('mode-sing-together')
+    expect(allHighlighted()).toEqual(['sing-together'])
+    expect(
+      document.querySelector('[data-guide-target="sing-together"]'),
+    ).toHaveAttribute('data-guide-showcase', 'true')
+
+    advanceBox()
+    expect(screen.getByText(lineOf('mode-karaoke'))).toBeInTheDocument()
+    expect(allHighlighted()).toEqual(['karaoke'])
+  })
+
+  it('lights both entries once the choice is really the player to make', () => {
+    renderApp()
+
+    walkTo('mode')
+
     expect(screen.getByText(lineOf('mode'))).toBeInTheDocument()
-    expect(highlighted()).toHaveAttribute('data-guide-target', 'karaoke')
+    expect(allHighlighted()).toEqual(['sing-together', 'karaoke'])
+    // Neither is a showcase any more: both are there to be pressed.
+    expect(
+      document.querySelectorAll('[data-guide-showcase="true"]'),
+    ).toHaveLength(0)
   })
 
   it('takes either mode to the briefing (AC-7)', () => {
@@ -281,11 +347,26 @@ describe('the guided run', () => {
     expect(screen.getByText(lineOf('briefing'))).toBeInTheDocument()
   })
 
-  it('holds the song while the briefing is up, then lets it play (AC-8, AC-9)', () => {
+  it('does not choose a mode from a press on the one she is describing', () => {
+    renderApp()
+
+    walkTo('mode-sing-together')
+    fireEvent.click(screen.getByText('Sing together'))
+
+    // The press moved her on; it did not pick the mode and skip the rest.
+    expect(screen.getByText(lineOf('mode-karaoke'))).toBeInTheDocument()
+    expect(screen.getByText('Sing together')).toBeInTheDocument()
+  })
+
+  it('holds the song across both briefing steps, then lets it play (AC-8, AC-9)', () => {
     renderApp()
 
     walkTo('briefing')
     expect(screen.getByText(lineOf('briefing'))).toBeInTheDocument()
+    expect(screen.queryByTestId('audio-player')).not.toBeInTheDocument()
+
+    advanceBox()
+    expect(screen.getByText(lineOf('briefing-score'))).toBeInTheDocument()
     expect(screen.queryByTestId('audio-player')).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByText('BEGIN'))
@@ -294,6 +375,62 @@ describe('the guided run', () => {
     expect(document.querySelector('.GuideScrim')).not.toBeInTheDocument()
     expect(document.querySelector('.GuidePortrait')).not.toBeInTheDocument()
     expect(highlighted()).toBeNull()
+  })
+
+  it('tells the player how to move past a step she advances herself', () => {
+    renderApp()
+
+    walkTo('mode-intro')
+
+    const box = document.querySelector('.GuideDialogueBox') as HTMLElement
+    expect(box).toHaveAttribute('data-guide-advance', 'true')
+    expect(box).toHaveTextContent('Click or press Enter to CONTINUE')
+  })
+
+  it('moves on from a click anywhere, not only on the box', () => {
+    renderApp()
+
+    walkTo('mode-intro')
+    fireEvent.click(document.querySelector('.GuideScrim') as HTMLElement)
+
+    expect(screen.getByText(lineOf('mode-sing-together'))).toBeInTheDocument()
+  })
+
+  it('moves past it on a key as well as on a click', () => {
+    renderApp()
+
+    walkTo('mode-intro')
+    fireEvent.keyDown(document, { key: 'Enter' })
+
+    expect(screen.getByText(lineOf('mode-sing-together'))).toBeInTheDocument()
+  })
+
+  it('leaves the keys alone on a step the spotlit control advances', () => {
+    renderApp()
+
+    walkTo('music-list')
+    fireEvent.keyDown(document, { key: 'Enter' })
+    fireEvent.keyDown(document, { key: ' ' })
+
+    expect(screen.getByText(lineOf('music-list'))).toBeInTheDocument()
+  })
+
+  it('counts a press on the box prompt once, not twice', () => {
+    renderApp()
+
+    walkTo('briefing')
+    fireEvent.click(screen.getByText('CONTINUE'))
+
+    expect(screen.getByText(lineOf('briefing-score'))).toBeInTheDocument()
+  })
+
+  it('counts a press on the spotlit control once, not twice', () => {
+    renderApp()
+
+    walkTo('mode')
+    fireEvent.click(screen.getByText('Karaoke'))
+
+    expect(screen.getByText(lineOf('briefing'))).toBeInTheDocument()
   })
 
   // The tour carries no skip control: the player opted in at the prompt, and

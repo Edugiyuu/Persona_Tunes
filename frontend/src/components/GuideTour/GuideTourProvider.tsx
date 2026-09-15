@@ -7,8 +7,16 @@ import {
   type GuideTourValue,
 } from './guideContext'
 import { hasAnsweredRecently, rememberAnswer } from './guideStorage'
-import { GUIDE_STEPS, isTourRoute } from './steps'
-import { useGuideElement } from './useGuideTarget'
+import {
+  GUIDE_STEPS,
+  isPlayerAdvanced,
+  isTourRoute,
+  type GuideTargetId,
+} from './steps'
+
+/** One array, so a step that lights nothing is not a new one every render. */
+const NO_TARGETS: readonly GuideTargetId[] = []
+import { useGuideElements } from './useGuideTarget'
 
 export function GuideTourProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
@@ -18,8 +26,11 @@ export function GuideTourProvider({ children }: { children: ReactNode }) {
   const step = phase === 'running' ? (GUIDE_STEPS[stepIndex] ?? null) : null
   const nextStep = phase === 'running' ? (GUIDE_STEPS[stepIndex + 1] ?? null) : null
 
-  const targetElement = useGuideElement(step?.highlight ?? null, pathname)
-  const nextElement = useGuideElement(nextStep?.highlight ?? null, pathname)
+  const targetElements = useGuideElements(step?.highlight ?? NO_TARGETS, pathname)
+  const nextElements = useGuideElements(
+    nextStep?.highlight ?? NO_TARGETS,
+    pathname,
+  )
 
   // Ask once, on the way in, and only where the tour starts.
   useEffect(() => {
@@ -54,16 +65,35 @@ export function GuideTourProvider({ children }: { children: ReactNode }) {
 
   // A step also yields to the next one the moment that one's element shows up:
   // the player may reach it by a route the highlighted control did not own.
+  //
+  // Except when the step is one the player advances: those point at nothing, so
+  // the next step's control is already on screen the instant they open — and
+  // yielding to it would flick past a line before it could be read.
+  //
+  // The elements are resolved in an effect, so for one commit after a step
+  // turns over they are still the ones the PREVIOUS step was watching for.
+  // Checking that what came back is what this step is actually waiting on is
+  // what keeps that stale set from reading as "the next target has arrived".
   useEffect(() => {
-    if (phase === 'running' && nextStep?.highlight && nextElement) {
+    if (phase !== 'running' || !step || !nextStep || isPlayerAdvanced(step)) {
+      return
+    }
+    const wanted = nextStep.highlight
+    const arrived =
+      wanted.length > 0 &&
+      nextElements.length > 0 &&
+      nextElements.every((element) =>
+        wanted.includes(element.dataset.guideTarget as GuideTargetId),
+      )
+    if (arrived) {
       advance()
     }
-  }, [advance, nextElement, nextStep, phase])
+  }, [advance, nextElements, nextStep, phase, step])
 
   // Clicking the spotlit control moves the tour along. Capture phase, because
   // the control's own handler navigates and may unmount the page under us.
   useEffect(() => {
-    if (phase !== 'running' || !step || step.advanceOn.length === 0) {
+    if (phase !== 'running' || !step || isPlayerAdvanced(step)) {
       return
     }
 
@@ -95,28 +125,32 @@ export function GuideTourProvider({ children }: { children: ReactNode }) {
   // An element that never arrives — an empty list, a failed request — ends the
   // tour instead of leaving a scrim over a screen with no way forward.
   useEffect(() => {
-    if (phase !== 'running' || !step?.highlight || targetElement) {
+    if (
+      phase !== 'running' ||
+      step?.highlight.length === 0 ||
+      targetElements.length > 0
+    ) {
       return
     }
     const timer = window.setTimeout(finish, GUIDE_TARGET_TIMEOUT_MS)
     return () => {
       window.clearTimeout(timer)
     }
-  }, [finish, phase, step, targetElement])
+  }, [finish, phase, step, targetElements])
 
   const value = useMemo<GuideTourValue>(
     () => ({
       phase,
       step,
-      targetElement,
+      targetElements,
       isActive: phase === 'asking' || phase === 'running',
-      holdsPlayback: phase === 'running' && step?.id === 'briefing',
+      holdsPlayback: phase === 'running' && Boolean(step?.holdsPlayback),
       accept,
       decline: finish,
       skip: finish,
       advance,
     }),
-    [accept, advance, finish, phase, step, targetElement],
+    [accept, advance, finish, phase, step, targetElements],
   )
 
   return (

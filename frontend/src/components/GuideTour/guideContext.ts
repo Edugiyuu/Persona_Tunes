@@ -9,8 +9,8 @@ export type GuidePhase = 'idle' | 'asking' | 'running' | 'done'
 export interface GuideTourValue {
   readonly phase: GuidePhase
   readonly step: GuideStep | null
-  /** The element the current step spotlights, once it exists. */
-  readonly targetElement: HTMLElement | null
+  /** The elements the current step spotlights, once they exist. */
+  readonly targetElements: readonly HTMLElement[]
   /** The prompt or the tour is on screen: pages should stay out of the way. */
   readonly isActive: boolean
   /** The briefing is up, so the song must not start yet (AC-8). */
@@ -25,7 +25,7 @@ export interface GuideTourValue {
 const INERT: GuideTourValue = {
   phase: 'idle',
   step: null,
-  targetElement: null,
+  targetElements: [],
   isActive: false,
   holdsPlayback: false,
   accept: () => {},

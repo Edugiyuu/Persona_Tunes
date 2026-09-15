@@ -84,3 +84,10 @@
 .GuidePortrait {
   pointer-events: none;
 }
+
+/* Lit to be looked at, not pressed (a step describing one of two modes). The
+   hole in the scrim is over it either way — this only takes the click, which
+   then falls through to the page and is caught as "move her on". */
+[data-guide-highlighted='true'][data-guide-showcase='true'] {
+  pointer-events: none;
+}

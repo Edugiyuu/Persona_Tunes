@@ -26,7 +26,7 @@ const ViewMusic = ({ name, musicUrl, _id, albumImageUrl, difficulty }: ViewMusic
 
     return (
         <div className="ViewMusic">
-            <div className='Infos'>
+            <div className='Infos' data-guide-target='music-panel'>
                 <img id='albumImageUrl' src={albumImageUrl} />
                 <p>{name}</p>
                 <div className='difficulty'>
