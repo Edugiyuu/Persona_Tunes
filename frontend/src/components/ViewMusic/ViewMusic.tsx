@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { animations } from './animations';
 import './ViewMusic.css';
 import CustomLink from '../../utils/CustomLink';
 import { useGuideTour } from '../GuideTour/guideContext';
+import { useSilenceBackgroundMusic } from '../BackgroundMusic/useSilenceBackgroundMusic';
 
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
@@ -19,6 +20,9 @@ const ViewMusic = ({ name, musicUrl, _id, albumImageUrl, difficulty }: ViewMusic
     const triggerAnimation = animations();
     // Elizabeth is talking over this panel during the tour (D-4).
     const { isActive: guideIsActive } = useGuideTour();
+    // The preview and the ambience must never be heard at the same time.
+    const [previewPlaying, setPreviewPlaying] = useState(false);
+    useSilenceBackgroundMusic(previewPlaying);
 
     useEffect(() => {
         triggerAnimation();
@@ -42,6 +46,9 @@ const ViewMusic = ({ name, musicUrl, _id, albumImageUrl, difficulty }: ViewMusic
                         autoPlay={!guideIsActive}
                         src={musicUrl}
                         volume={guideIsActive ? 0 : 0.3}
+                        onPlay={() => setPreviewPlaying(true)}
+                        onPause={() => setPreviewPlaying(false)}
+                        onEnded={() => setPreviewPlaying(false)}
                         style={{ width: '100%', height: '100%' }}
                     />
                 </div>

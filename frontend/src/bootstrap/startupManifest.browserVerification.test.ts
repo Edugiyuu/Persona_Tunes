@@ -28,6 +28,7 @@ describe('programmatic FontFace verification', () => {
     const manifest = createStartupManifest('/', {
       createFontFace,
       createImage: fakeImage,
+      loadAudio: () => Promise.resolve(),
       fonts,
     })
     const faktos = manifest.find(({ id }) => id === 'font-faktos')

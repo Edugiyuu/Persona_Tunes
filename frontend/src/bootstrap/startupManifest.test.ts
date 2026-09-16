@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { BGM_TRACK } from '../components/BackgroundMusic/bgmContext'
 import {
   createStartupManifest,
   publicAssetUrl,
@@ -44,10 +45,11 @@ describe('publicAssetUrl', () => {
 })
 
 describe('createStartupManifest', () => {
-  it('declares exactly the approved six local resources and excludes heavy media', () => {
+  it('declares exactly the approved resources: six local ones plus the ambience', () => {
     const manifest = createStartupManifest('/Persona_Tunes/', {
       createImage: fakeImage,
       fonts: fakeFonts(),
+      loadAudio: () => Promise.resolve(),
     })
 
     expect(manifest.map(({ critical, id, kind }) => ({ critical, id, kind }))).toEqual([
@@ -57,6 +59,7 @@ describe('createStartupManifest', () => {
       { critical: true, id: 'home-logo', kind: 'image' },
       { critical: false, id: 'loader-art', kind: 'image' },
       { critical: false, id: 'shared-star', kind: 'image' },
+      { critical: true, id: 'background-music', kind: 'audio' },
     ])
 
     const urls = manifest.map(({ url }) => url)
@@ -69,15 +72,20 @@ describe('createStartupManifest', () => {
       '/Persona_Tunes/imgs/Logos/PersonaTunes.svg',
       '/Persona_Tunes/imgs/Chie/WorkInProgress.png',
       '/Persona_Tunes/star.svg',
+      BGM_TRACK,
     ])
     expect(urls.join(' ')).not.toContain('/Persona_Tunes/fonts/')
-    expect(urls.join(' ')).not.toMatch(/audio|video|api|3dModels|glb/i)
+    // The ambience is the one media file worth waiting on, and it is remote
+    // (Cloudinary serves audio under /video/upload/); nothing else may be.
+    const localUrls = urls.filter((url) => url !== BGM_TRACK)
+    expect(localUrls.join(' ')).not.toMatch(/audio|video|api|3dModels|glb/i)
   })
 
   it('loads and verifies each required font face through the font-loading API', async () => {
     const fonts = fakeFonts()
     const manifest = createStartupManifest('/', {
       createImage: fakeImage,
+      loadAudio: () => Promise.resolve(),
       fonts,
     })
     const controller = new AbortController()
@@ -103,6 +111,7 @@ describe('createStartupManifest', () => {
   it('rejects readiness when a requested font does not verify', async () => {
     const manifest = createStartupManifest('/', {
       createImage: fakeImage,
+      loadAudio: () => Promise.resolve(),
       fonts: fakeFonts(false),
     })
 
