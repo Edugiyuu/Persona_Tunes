@@ -50,6 +50,13 @@ export interface GuideStep {
   /** Clicking any of these advances the tour. Empty — the player advances it. */
   readonly advanceOn: readonly GuideTargetId[]
   readonly line: string
+  /**
+   * Elizabeth reading `line` aloud, under `frontend/public/audios/Elizabeth`.
+   * Served from the site root, so a player prefixes `import.meta.env.BASE_URL`
+   * the way every other call site does. Every step has one; a step added
+   * without one is read silently rather than holding the tour up.
+   */
+  readonly voice?: string
   /** What the player is advancing towards, named in the box's own prompt. */
   readonly confirmLabel?: string
   /** The song waits while this step is up: she is still explaining it. */
@@ -64,14 +71,16 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     routes: ['/'],
     highlight: ['select-music'],
     advanceOn: ['select-music'],
-    line: 'Welcome. I am Elizabeth, attendant of the Velvet Room. Allow me to guide you — begin by choosing a song. Press SELECT MUSIC.',
+    line: 'I have been expecting you. My name is Elizabeth, and I will be your guide here. Press SELECT MUSIC to choose a song.',
+    voice: '/audios/Elizabeth/Guide1.mp3',
   },
   {
     id: 'music-list',
     routes: ['/musics'],
     highlight: ['first-music'],
     advanceOn: ['first-music'],
-    line: 'Here is where you can SING songs, you people sing right?',
+    line: 'Here the songs are gathered. Choose one, and it will be prepared for you.',
+    voice: '/audios/Elizabeth/Guide2.mp3',
   },
   {
     id: 'music-detail',
@@ -79,6 +88,7 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     highlight: ['music-panel'],
     advanceOn: [],
     line: 'Here the song is set out for you: its name, and the difficulty it will ask of you.',
+    voice: '/audios/Elizabeth/Guide3.mp3',
     confirmLabel: 'CONTINUE',
   },
   {
@@ -87,13 +97,15 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     highlight: ['start-music'],
     advanceOn: ['start-music'],
     line: 'When you have decided, press START.',
+    voice: '/audios/Elizabeth/Guide4.mp3',
   },
   {
     id: 'mode-intro',
     routes: ['/sing-music/'],
     highlight: [],
     advanceOn: [],
-    line: 'There are two ways to perform, and you must choose one.',
+    line: 'The Velvet Room offers this song in two forms. You may accept only one.',
+    voice: '/audios/Elizabeth/Guide5.mp3',
     confirmLabel: 'CONTINUE',
   },
   {
@@ -101,7 +113,8 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     routes: ['/sing-music/'],
     highlight: ['sing-together'],
     advanceOn: [],
-    line: 'Sing together keeps the original singer at your side — their voice carries the melody, and you need only follow.',
+    line: 'Sing together keeps the singer with you, so the melody is never truly lost.',
+    voice: '/audios/Elizabeth/Guide6.mp3',
     confirmLabel: 'CONTINUE',
   },
   {
@@ -109,7 +122,8 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     routes: ['/sing-music/'],
     highlight: ['karaoke'],
     advanceOn: [],
-    line: 'Karaoke takes them away entirely. Only the instruments remain, and the song is yours alone to carry.',
+    line: 'Karaoke takes her away, and leaves the melody entirely in your hands.',
+    voice: '/audios/Elizabeth/Guide7.mp3',
     confirmLabel: 'CONTINUE',
   },
   {
@@ -118,13 +132,15 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     highlight: ['sing-together', 'karaoke'],
     advanceOn: ['karaoke', 'sing-together'],
     line: 'Now — choose whichever suits you. I shall listen either way.',
+    voice: '/audios/Elizabeth/Guide8.mp3',
   },
   {
     id: 'briefing',
     routes: ['/sing-music/'],
     highlight: [],
     advanceOn: [],
-    line: 'A moment before we begin. The lyrics will appear as the song plays — sing them aloud, in time, and your microphone will keep everything you offer.',
+    line: 'One more thing, the song will show you its lyrics. Speak them aloud, and do not hesitate.',
+    voice: '/audios/Elizabeth/Guide9.mp3',
     confirmLabel: 'CONTINUE',
     holdsPlayback: true,
   },
@@ -133,7 +149,8 @@ export const GUIDE_STEPS: readonly GuideStep[] = [
     routes: ['/sing-music/'],
     highlight: [],
     advanceOn: [],
-    line: 'When the final note fades, your performance is measured and given a score. Do not fear a poor result; I am told humans improve through repetition. Whenever you are ready, we shall start.',
+    line: 'When it ends, you will be measured. I would not worry, humans are said to improve by repeating themselves.',
+    voice: '/audios/Elizabeth/Guide10.mp3',
     confirmLabel: 'BEGIN',
     holdsPlayback: true,
   },

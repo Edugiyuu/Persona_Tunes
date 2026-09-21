@@ -6,7 +6,7 @@ branch: feat-elizabeth-guide
 area: frontend/guide
 owner: Edupa
 created: 2026-08-31
-updated: 2026-09-14
+updated: 2026-09-21
 depends_on: []
 supersedes: []
 ---
@@ -55,9 +55,13 @@ Nothing blocks.
 
 ## The script
 
-Elizabeth's lines, in order. **Use these strings verbatim** — they are the copy,
-not a paraphrase target. Her voice: formal, delighted, faintly alien, treats
+Elizabeth's lines, in order. Her voice: formal, delighted, faintly alien, treats
 human behaviour as fascinating field research.
+
+**This table mirrors `steps.ts`; it no longer sets it.** RT-UI-008 recorded
+every line, and a recording cannot be edited by rewording a table — so where a
+take said something other than the line fixed here, the line moved to match the
+take. Seven of the ten did. Changing a line now means a new recording as well.
 
 Two fields shape a step, and the last two columns are them:
 
@@ -83,16 +87,16 @@ light move to `START!`.
 
 | Step | Route | She says | Lit | Advances on |
 |---|---|---|---|---|
-| S-1 `home` | `/` | "Welcome. I am Elizabeth, attendant of the Velvet Room. Allow me to guide you — begin by choosing a song. Press SELECT MUSIC." | the "SELECT MUSIC" menu entry | the spotlit control |
-| S-2a `music-list` | `/musics` | "Here is where you can SING songs, you people sing right?" | the **first** song card in the list (its `VIEW MUSIC..` control) | the spotlit control |
+| S-1 `home` | `/` | "I have been expecting you. My name is Elizabeth, and I will be your guide here. Press SELECT MUSIC to choose a song." | the "SELECT MUSIC" menu entry | the spotlit control |
+| S-2a `music-list` | `/musics` | "Here the songs are gathered. Choose one, and it will be prepared for you." | the **first** song card in the list (its `VIEW MUSIC..` control) | the spotlit control |
 | S-2b `music-detail` | `/musics` (detail panel open) | "Here the song is set out for you: its name, and the difficulty it will ask of you." | the **whole detail panel**, shown not offered | the player (CONTINUE) |
 | S-2c `music-start` | `/musics` (detail panel open) | "When you have decided, press START." | the `START!` control in the detail panel | the spotlit control |
-| S-3a `mode-intro` | `/sing-music/:id` (mode selector open) | "There are two ways to perform, and you must choose one." | nothing | the player (CONTINUE) |
-| S-3b `mode-sing-together` | `/sing-music/:id` | "Sing together keeps the original singer at your side — their voice carries the melody, and you need only follow." | "Sing together", shown not offered | the player (CONTINUE) |
-| S-3c `mode-karaoke` | `/sing-music/:id` | "Karaoke takes them away entirely. Only the instruments remain, and the song is yours alone to carry." | "Karaoke", shown not offered | the player (CONTINUE) |
+| S-3a `mode-intro` | `/sing-music/:id` (mode selector open) | "The Velvet Room offers this song in two forms. You may accept only one." | nothing | the player (CONTINUE) |
+| S-3b `mode-sing-together` | `/sing-music/:id` | "Sing together keeps the singer with you, so the melody is never truly lost." | "Sing together", shown not offered | the player (CONTINUE) |
+| S-3c `mode-karaoke` | `/sing-music/:id` | "Karaoke takes her away, and leaves the melody entirely in your hands." | "Karaoke", shown not offered | the player (CONTINUE) |
 | S-3d `mode` | `/sing-music/:id` | "Now — choose whichever suits you. I shall listen either way." | **both** entries | the spotlit control (either one) |
-| S-4a `briefing` | `/sing-music/:id` (mode chosen, music **paused**) | "A moment before we begin. The lyrics will appear as the song plays — sing them aloud, in time, and your microphone will keep everything you offer." | nothing | the player (CONTINUE) |
-| S-4b `briefing-score` | `/sing-music/:id` (music still **paused**) | "When the final note fades, your performance is measured and given a score. Do not fear a poor result; I am told humans improve through repetition. Whenever you are ready, we shall start." | nothing | the player (BEGIN) |
+| S-4a `briefing` | `/sing-music/:id` (mode chosen, music **paused**) | "One more thing, the song will show you its lyrics. Speak them aloud, and do not hesitate." | nothing | the player (CONTINUE) |
+| S-4b `briefing-score` | `/sing-music/:id` (music still **paused**) | "When it ends, you will be measured. I would not worry, humans are said to improve by repeating themselves." | nothing | the player (BEGIN) |
 
 The music is held for the whole of S-4, not only its last box: a step says so
 itself with `holdsPlayback`, so splitting the briefing again cannot let the song
@@ -122,8 +126,8 @@ Every row is binary — it passes or it does not. Completion is
 | AC-10 | A skip control is available at every step and ends the tour immediately, leaving the current route interactive; if the tour is running and the player navigates anywhere off-script, the tour ends silently rather than highlighting a missing element | `GuideTour.test.tsx` | ☑ |
 | AC-11 | After one accept, decline, skip, or completion, a reload does not show the prompt again for 24h; once the stored entry is older than 24h the prompt asks again. Every `localStorage` access survives a throwing storage (private windows) without breaking the app | `GuideTour.test.tsx` with storage and clock stubbed | ☑ |
 | AC-12 | With the guide never accepted, `/`, `/musics` and `/sing-music/:id` behave exactly as they do today — no scrim, no extra DOM beyond the target hooks, no console errors | existing suites still green; browser | ☑ |
-| AC-13 | This task adds exactly **one** `.css` file — `spotlight.css`, the scrim/cutout/layer mechanics only, with every colour, size and offset behind a `--guide-*` custom property the owner overrides. No other `.css`, no `style={{}}` prop, no `gsap` import anywhere in the diff. Geometry is fed to the CSS as custom properties set on a ref | `git diff --stat` shows one `.css`; `grep -rn "gsap\|style={{" src/components/GuideTour/` is empty | ☑ |
-| AC-14 | `npm run test`, changed-file lint, and `npm run build` are all green | 81 tests pass (61 before), `eslint` clean on the changed paths, `npm run build` succeeds | ☑ |
+| AC-13 | The guide carries no styling of its own beyond the scrim mechanics: every colour, size and offset is behind a `--guide-*` custom property, geometry reaches the CSS as custom properties set on a ref, and there is no `style={{}}` prop and no `gsap` import anywhere under `GuideTour/`. **Amended 2026-09-21** — as written this row also said the branch adds exactly one `.css`, proven by `git diff --stat`. It no longer does: the owner's visual pass landed on this same branch afterwards as `guide.css` (344 lines), which was always their work and always outside this task. The intent the row existed for — that this task hands over an unstyled, tokenised seam rather than a look — held, and is what is checked above | `grep -rn "gsap\|style={{" src/components/GuideTour/` is empty; `spotlight.css` is mechanics only and every value in it is a `--guide-*` property | ☑ |
+| AC-14 | `npm run test`, changed-file lint, and `npm run build` are all green | 110 tests pass across the suite (61 before this task), `eslint` clean on the changed paths, `npm run build` succeeds | ☑ |
 
 **Completion: 16/16 (100%)**
 
@@ -140,7 +144,7 @@ One line per file. *What* changes, never *how*.
 | `frontend/src/components/GuideTour/useGuideTarget.ts` | new — resolves and re-resolves a step's target elements once they exist in the DOM, tracks the one rect around them all, and ends the tour when they never appear |
 | `frontend/src/components/GuideTour/spotlight.css` | new — the **only** stylesheet: full-viewport scrim, the cutout around the tracked rect, and the raised layer for the target. Every value behind a `--guide-*` custom property; no Persona look, no portrait or dialogue-box styling |
 | `frontend/src/components/GuideTour/guideStorage.ts` | new — the 24h answer, and the try/catch around a storage that throws |
-| `frontend/src/components/GuideTour/GuideTour.test.tsx` | new — 31 tests covering AC-1 through AC-12, AC-15 and AC-16 |
+| `frontend/src/components/GuideTour/GuideTour.test.tsx` | new — the tests covering AC-1 through AC-12, AC-15 and AC-16 (31 of them; RT-UI-008 later added six more to the same file) |
 | `frontend/src/App.tsx` | wrap the routes in `GuideTourProvider` and mount `<GuideTour>` once, outside the route switch |
 | `frontend/src/components/Home/Home.tsx` | give the "SELECT MUSIC" entry a stable `data-guide-target` hook |
 | `frontend/src/components/SelectMusic/SelectMusic.tsx` | give the first rendered song card a stable `data-guide-target` hook |
@@ -197,9 +201,12 @@ Nothing in this task touches it.
   slide-in, no spotlight pulse — and therefore no `prefers-reduced-motion`
   handling, since there is nothing to reduce yet. Everything appears instantly.
 - Elizabeth's **voice lines** (audio playback, timing, subtitle sync).
+  **Done since, in RT-UI-008** — every step is voiced and her mouth is timed by
+  the recording. Subtitle sync was dropped there: there is no reveal to sync to.
 - The **lip-sync** frame animation. The portrait is built as a stacked frame set
   with a `speaking` boolean that currently does nothing, so the frames drop in
-  later.
+  later. **Landed since**, with the visual pass in `guide.css`, and driven by
+  the audio as of RT-UI-008.
 - Changing what any menu entry, song card, or mode entry *does*, or where it
   links.
 - Extracting a shared "Persona dialogue box" component.
@@ -277,3 +284,4 @@ Newest last. One line per real change of state.
 | 2026-09-14 | S-2b reworded, and the two longest speeches split so no box has to be read in one breath: S-3 became `mode-intro` + `mode`, S-4 became `briefing` + `briefing-score`. A step that points at nothing now tells the player how to leave it and takes a click anywhere or `Enter` / `Space` (AC-15); the auto-advance that yields to the next step's target is held off on those steps, or they would flick past unread. The song's pause moved from one step id to a `holdsPlayback` flag, so it covers both briefing boxes. 87 tests pass (was 81), lint clean, build green. |
 | 2026-09-14 | S-2b reworded to the owner's pick: it now names what the panel actually shows — the song's name and its difficulty — because D-4 silences the preview for the whole tour, so no draft of hers may hear the melody. S-3 reshaped on the owner's call: she introduces the choice, then lights each mode in turn while she describes it — lit to be looked at, with the press taken away so it cannot choose a mode mid-sentence (AC-16) — and only the last box lights both and lets the player pick freely, rather than the tour pointing at Karaoke as though it were the answer. `highlight` became a list to carry that, and the cutout is now the one rect around every control a step lights. Two races fell out of it and are fixed: the click that turns a step over could advance the new one as well (the advance listener moved to the capture phase, the only phase already past when it is attached), and the auto-advance could read the PREVIOUS step's resolved targets as the next one's arrival. 92 tests pass (was 87), lint clean, build green. |
 | 2026-09-14 | S-2b split in two on the owner's call, for the same reason S-3 was: she describes the panel — its name and its difficulty — with the whole panel lit and nothing to press, and only then asks for `START!`, which is when the light moves there. The panel is a target of its own on `ViewMusic` now. Ten steps. 92 tests pass, lint clean, build green. |
+| 2026-09-21 | Reconciled with the branch, which had outgrown the task twice over. AC-13 amended: the owner's visual pass landed here as `guide.css`, so "exactly one `.css`" stopped being true — the row now checks what it was always for, that this task hands over an unstyled tokenised seam. The lip-sync frames landed with that pass. And the script table stopped being the source of the copy: RT-UI-008 voiced all ten steps, and seven lines were reworded to match what the takes say, since a recording cannot be edited by rewording a table. AC-14's evidence refreshed to the current suite. No behaviour changed. |

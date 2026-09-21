@@ -9,6 +9,7 @@ import { GuideTourProvider } from './GuideTourProvider'
 import { useGuideTour } from './guideContext'
 import { GUIDE_STORAGE_KEY, GUIDE_TTL_MS } from './guideStorage'
 import { GUIDE_STEPS } from './steps'
+import { resetGuideVoiceElement } from './voice'
 
 vi.mock('../Home/animations', () => ({
   useStarAnimations: vi.fn(),
@@ -166,7 +167,27 @@ const walkTo = (
 
 beforeEach(() => {
   window.localStorage.clear()
+  resetGuideVoiceElement()
 })
+
+/**
+ * Her voice, watched at the element: the module keeps a single one to itself
+ * and the component only ever asks it to start and stop, so `play` and `pause`
+ * are the whole of what there is to assert on.
+ */
+const playing = vi.fn()
+const paused = vi.fn()
+
+/** The element she is speaking through — the `this` of the last `play()`. */
+const voiceElementUnderTest = () =>
+  playing.mock.instances.at(-1) as HTMLAudioElement
+
+/** Which recording is loaded in it. */
+const currentSrc = () => voiceElementUnderTest().src
+
+/** The open-mouthed frame, whose flag is whether she is talking. */
+const speakingFrame = () =>
+  document.querySelector('.GuidePortraitSpeaking') as HTMLElement
 
 describe('the opt-in prompt', () => {
   it('asks on a first load of home and offers both answers (AC-1)', () => {
@@ -471,6 +492,75 @@ describe('the guided run', () => {
     } finally {
       vi.useRealTimers()
     }
+  })
+})
+
+describe('her voice', () => {
+  beforeEach(() => {
+    playing.mockReset().mockResolvedValue(undefined)
+    paused.mockReset()
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(playing)
+    vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(paused)
+  })
+
+  it('reads her line aloud from the step that opens the tour', () => {
+    renderApp()
+
+    accept()
+
+    expect(playing).toHaveBeenCalledTimes(1)
+    expect(currentSrc()).toContain('/audios/Elizabeth/Guide1.mp3')
+  })
+
+  it('plays each step in turn, and never two of her at once', () => {
+    renderApp()
+
+    walkTo('music-list')
+
+    expect(currentSrc()).toContain('/audios/Elizabeth/Guide2.mp3')
+    // Stopped on the way out of the first step, so the welcome is not still
+    // running underneath the line now on screen.
+    expect(paused).toHaveBeenCalled()
+    expect(playing).toHaveBeenCalledTimes(2)
+  })
+
+  it('has a recording for every line she has', () => {
+    expect(GUIDE_STEPS.filter((step) => !step.voice)).toEqual([])
+  })
+
+  it('keeps speaking through the briefing, which holds the song', () => {
+    renderApp()
+
+    walkTo('briefing-score')
+
+    expect(currentSrc()).toContain('/audios/Elizabeth/Guide10.mp3')
+    expect(playing).toHaveBeenCalledTimes(GUIDE_STEPS.length)
+  })
+
+  it('falls quiet when the recording ends, with her line left on screen', () => {
+    renderApp()
+
+    accept()
+    expect(speakingFrame()).toHaveAttribute('data-guide-speaking', 'true')
+
+    act(() => {
+      voiceElementUnderTest().dispatchEvent(new Event('ended'))
+    })
+
+    expect(speakingFrame()).toHaveAttribute('data-guide-speaking', 'false')
+    expect(screen.getByText(lineOf('home'))).toBeInTheDocument()
+  })
+
+  it('times her mouth off the line when the recording will not play', async () => {
+    playing.mockRejectedValue(new Error('autoplay refused'))
+    renderApp()
+
+    accept()
+    await act(async () => {})
+
+    // Still talking: the guess took over, rather than her mouth shutting the
+    // moment the browser refused the audio.
+    expect(speakingFrame()).toHaveAttribute('data-guide-speaking', 'true')
   })
 })
 

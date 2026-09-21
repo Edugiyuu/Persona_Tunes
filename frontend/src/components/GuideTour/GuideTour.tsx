@@ -5,6 +5,7 @@ import { publicAssetUrl } from '../../bootstrap/startupManifest'
 import { useGuideTour } from './guideContext'
 import { GUIDE_NAME, isPlayerAdvanced, isShowcase } from './steps'
 import { useElementsRect } from './useGuideTarget'
+import { speakGuideLine } from './voice'
 
 const portraitMouthClosedUrl = publicAssetUrl(
   import.meta.env.BASE_URL,
@@ -39,20 +40,48 @@ const GuideTour = () => {
   const playerAdvances = Boolean(step && isPlayerAdvanced(step))
 
   // She talks for as long as the line takes to say, then falls quiet with the
-  // text still on screen. There is no voice track to sync to, so the window is
-  // read off the line's length — capped, because her longest speech would
-  // otherwise leave her mouth going for half a minute.
+  // text still on screen. A step carrying a recording is timed by the
+  // recording: her mouth stops on the last word she actually says, not on a
+  // guess about it.
+  //
+  // The guess is still here, and it is what a step without one falls back on —
+  // as does a step whose recording will not play, which on a first visit is
+  // usually the browser refusing to start audio. Either way the window is read
+  // off the line's length, capped, because her longest speech would otherwise
+  // leave her mouth going for half a minute.
+  //
+  // Leaving a step stops her mid-line on purpose. The player has moved on, and
+  // the alternative is the step they just left talking over the one they are
+  // on.
   useEffect(() => {
     if (!step) {
       setSpeaking(false)
       return
     }
     setSpeaking(true)
-    const timer = window.setTimeout(
-      () => setSpeaking(false),
-      Math.min(12000, Math.max(1600, step.line.length * 40)),
-    )
-    return () => window.clearTimeout(timer)
+
+    let timer = 0
+    const readAloud = () => {
+      timer = window.setTimeout(
+        () => setSpeaking(false),
+        Math.min(12000, Math.max(1600, step.line.length * 40)),
+      )
+    }
+
+    if (!step.voice) {
+      readAloud()
+      return () => window.clearTimeout(timer)
+    }
+
+    const stop = speakGuideLine({
+      src: step.voice,
+      onEnded: () => setSpeaking(false),
+      onFailed: readAloud,
+    })
+    return () => {
+      window.clearTimeout(timer)
+      stop()
+    }
   }, [step])
 
   // Geometry again, and the same reason: the box is the one piece of chrome

@@ -44,13 +44,16 @@
     transform: translate(-50%, -50%);
     max-width: min(32rem, calc(100vw - 2rem));
     padding: 1rem 1.25rem;
-    background: var(--guide-panel-bg, rgba(8, 10, 24, 0.92));
+    background: var(--guide-panel-bg, rgba(1, 20, 165, 0.91));
     color: var(--guide-panel-fg, #fff);
-    border: 1px solid var(--guide-panel-border, rgba(255, 255, 255, 0.35));
+    border-radius: 20px;
 }
 
 .GuidePromptTitle {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.95rem;
+    font-family: "Rodin";
+    font-style: italic;
+    
 }
 
 /* --- The dialogue box ------------------------------------------------- */
@@ -152,6 +155,14 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+
+}
+.GuidePromptAccept,
+.GuidePromptDecline{
+    font-family: "Rodin";
+    border: none;
+    padding: 0.5rem 1rem;
+    background-color: white;
 }
 
 /* Bare text, not a second plate: the box it sits in is already the button. */
