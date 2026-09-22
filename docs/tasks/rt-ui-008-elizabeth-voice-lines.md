@@ -1,12 +1,12 @@
 ---
 id: RT-UI-008
 title: Give Elizabeth a voice — play a recording of every guided line and time her mouth to it
-status: in-review
+status: done
 branch: feat-elizabeth-guide
 area: frontend/guide
 owner: Edupa
 created: 2026-09-21
-updated: 2026-09-21
+updated: 2026-09-22
 depends_on: [RT-UI-005]
 supersedes: []
 ---
@@ -164,4 +164,5 @@ Newest last. One line per real change of state.
 | Date | What happened |
 |---|---|
 | 2026-09-21 | Eight recordings landed and were wired to the first eight steps; the two briefing boxes stayed silent, and the code was built to carry a step with no recording rather than wait for one. |
+| 2026-09-22 | Accepted by the owner on PR #16 — `done`. |
 | 2026-09-21 | The last two recordings landed and the script is fully voiced. Her mouth is now timed by the audio rather than by the length of her text, with the old guess kept as the fallback for a line that will not play. Task written after the work, to close the gap RT-UI-005 left when it split the voice out and no follow-up was opened. Seven lines were reworded to match what the takes actually say. 110 tests pass (was 104), lint clean, build green, full walk in the browser with ten requests in step order. |

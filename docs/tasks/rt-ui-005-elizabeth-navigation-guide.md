@@ -1,12 +1,12 @@
 ---
 id: RT-UI-005
 title: Add an optional Elizabeth-guided navigation tutorial across the first run
-status: in-review
+status: done
 branch: feat-elizabeth-guide
 area: frontend/guide
 owner: Edupa
 created: 2026-08-31
-updated: 2026-09-21
+updated: 2026-09-22
 depends_on: []
 supersedes: []
 ---
@@ -284,5 +284,6 @@ Newest last. One line per real change of state.
 | 2026-09-14 | S-2b reworded, and the two longest speeches split so no box has to be read in one breath: S-3 became `mode-intro` + `mode`, S-4 became `briefing` + `briefing-score`. A step that points at nothing now tells the player how to leave it and takes a click anywhere or `Enter` / `Space` (AC-15); the auto-advance that yields to the next step's target is held off on those steps, or they would flick past unread. The song's pause moved from one step id to a `holdsPlayback` flag, so it covers both briefing boxes. 87 tests pass (was 81), lint clean, build green. |
 | 2026-09-14 | S-2b reworded to the owner's pick: it now names what the panel actually shows — the song's name and its difficulty — because D-4 silences the preview for the whole tour, so no draft of hers may hear the melody. S-3 reshaped on the owner's call: she introduces the choice, then lights each mode in turn while she describes it — lit to be looked at, with the press taken away so it cannot choose a mode mid-sentence (AC-16) — and only the last box lights both and lets the player pick freely, rather than the tour pointing at Karaoke as though it were the answer. `highlight` became a list to carry that, and the cutout is now the one rect around every control a step lights. Two races fell out of it and are fixed: the click that turns a step over could advance the new one as well (the advance listener moved to the capture phase, the only phase already past when it is attached), and the auto-advance could read the PREVIOUS step's resolved targets as the next one's arrival. 92 tests pass (was 87), lint clean, build green. |
 | 2026-09-14 | S-2b split in two on the owner's call, for the same reason S-3 was: she describes the panel — its name and its difficulty — with the whole panel lit and nothing to press, and only then asks for `START!`, which is when the light moves there. The panel is a target of its own on `ViewMusic` now. Ten steps. 92 tests pass, lint clean, build green. |
+| 2026-09-22 | Accepted by the owner on PR #16 — `done`. |
 | 2026-09-22 | Two stale claims caught in review on PR #16 and amended. AC-10 demanded a skip control at every step; there is none by design, and the test asserts its absence — the row now checks the escape that does exist, walking off the script. The Touches row for `GuideTour.tsx` named the same control, and still described driving `driver.js`, dropped back on 2026-09-02. No behaviour changed. |
 | 2026-09-21 | Reconciled with the branch, which had outgrown the task twice over. AC-13 amended: the owner's visual pass landed here as `guide.css`, so "exactly one `.css`" stopped being true — the row now checks what it was always for, that this task hands over an unstyled tokenised seam. The lip-sync frames landed with that pass. And the script table stopped being the source of the copy: RT-UI-008 voiced all ten steps, and seven lines were reworded to match what the takes say, since a recording cannot be edited by rewording a table. AC-14's evidence refreshed to the current suite. No behaviour changed. |
