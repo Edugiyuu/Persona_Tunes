@@ -6,15 +6,16 @@ Rhythm Tunes is media-heavy. Assets are split between deployable frontend files,
 
 | Location | Files | Size | Formats |
 |---|---:|---:|---|
-| `frontend/public/` | 37 | 23,661,247 bytes (22.56 MiB) | 1 GLB, 3 MP3, 2 OTF, 21 PNG, 3 SVG, 1 TTF, 6 WAV |
+| `frontend/public/` | 52 | 21,151,918 bytes (20.17 MiB) | 3 GLB, 12 MP3, 28 PNG, 3 SVG, 6 WAV |
 | `frontend/src/Sounds/` | 2 | 11,576,582 bytes (11.04 MiB) | 2 MP3 |
 | `MusicsBackUp/` | 18 | 68,053,725 bytes (64.90 MiB) | 9 MP3, 4 PNG, 3 LRC, 2 TXT |
 
 ## Locations and purpose
 
 - `frontend/public/imgs/`: character art, cut-ins, patch-note portraits, and the Persona Tunes logo.
-- `frontend/public/audios/UI/`: interface SFX and menu music.
+- `frontend/public/audios/UI/`: interface SFX. The site's background music is not here — it streams from Cloudinary (`bgm/blues-in-velvet-room`, served at 64 kbps); see RT-UI-007.
 - `frontend/public/audios/Chie/`: character voice clips.
+- `frontend/public/audios/Elizabeth/`: her ten guided-tour lines, `Guide1.mp3` through `Guide10.mp3`, numbered in the order the tour reaches them and mapped to steps in `steps.ts`; 1,027 KiB in total. See RT-UI-008.
 - `frontend/public/fonts/`: Rodin and Faktos font files.
 - `frontend/public/3dModels/`: experimental cartoon TV model.
 - `frontend/src/Sounds/`: large test audio files bundled under the source tree; no active import was found.

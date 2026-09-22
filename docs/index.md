@@ -49,6 +49,10 @@ Tracked original/instrumental audio, cover images, and lyric source files. It is
   - [RT-UI-002 — Animated Yukiko mode selector](./tasks/rt-ui-002-animated-yukiko-mode-selector.md)
   - [RT-UI-003 — Persona 3 Reload home menu](./tasks/rt-ui-003-persona3-reload-home-menu.md)
   - [RT-UI-004 — Persona 3 Reload mode selector](./tasks/rt-ui-004-persona3-reload-mode-selector.md)
+  - [RT-UI-005 — Elizabeth navigation guide](./tasks/rt-ui-005-elizabeth-navigation-guide.md)
+  - [RT-UI-006 — Persona 3 Reload patch notes](./tasks/rt-ui-006-persona3-reload-patch-notes.md)
+  - [RT-UI-007 — Site-wide background music](./tasks/rt-ui-007-site-wide-background-music.md)
+  - [RT-UI-008 — Elizabeth voice lines](./tasks/rt-ui-008-elizabeth-voice-lines.md)
 
 ## Process
 

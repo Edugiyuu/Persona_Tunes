@@ -28,11 +28,13 @@ const selectSoundUrl = publicAssetUrl(
 interface ModeItemDef {
   readonly title: string;
   readonly useSingerVoice: boolean;
+  /** Tags the entry for the guided tour (RT-UI-005). */
+  readonly guideTarget: string;
 }
 
 const MODE_ITEMS: readonly ModeItemDef[] = [
-  { title: "Sing together", useSingerVoice: true },
-  { title: "Karaoke", useSingerVoice: false },
+  { title: "Sing together", useSingerVoice: true, guideTarget: "sing-together" },
+  { title: "Karaoke", useSingerVoice: false, guideTarget: "karaoke" },
 ];
 
 interface ModeSelectorProps {
@@ -131,6 +133,7 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({ handleModeSelect }) => {
             <button
               className="ModeItem"
               data-active={isActive}
+              data-guide-target={item.guideTarget}
               key={item.title}
               onClick={() => selectMode(item.useSingerVoice)}
               onMouseEnter={() => moveCursor(index)}

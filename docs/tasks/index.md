@@ -1,7 +1,7 @@
 ---
 title: Implementation Task Dashboard
-last_assessed: 2026-08-31
-portfolio_completion: 75
+last_assessed: 2026-09-22
+portfolio_completion: 86
 ---
 
 # Implementation Task Dashboard
@@ -26,7 +26,12 @@ document is. New tasks start from [`_template.md`](./_template.md).
   - `paused` — deliberately parked. Unlike `blocked`, nothing is missing: the
     work could proceed, and someone decided it should not, for now. Keep the
     row and say who parked it and what would restart it.
-  - `done` — every criterion checked with evidence. There is no 95%.
+  - `in-review` — every criterion checked with evidence, waiting on the owner
+    to accept it. It counts as in play and at its full percentage; what it is
+    not yet is signed off. It becomes `done` when the owner says so, which for
+    work on a branch normally means the pull request landing.
+  - `done` — every criterion checked with evidence, and accepted. There is no
+    95%.
   - `dropped` — abandoned or superseded; keep the row with the reason.
 - Portfolio completion is the equal-weight mean of the percentages of tasks that
   are actually in play. `paused` and `dropped` tasks are excluded — averaging in
@@ -43,14 +48,16 @@ counting the next time one is touched.
 
 | ID | Task | Status | Completion | Current evidence |
 |---|---|---|---:|---|
-| RT-UI-001 | [Replace the artificial startup screen with real application loading](./rt-ui-001-functional-startup-loading.md) | done | 100% | Six-resource bootstrap, truthful recovery UI, 36 passing tests, clean builds, and complete browser acceptance evidence. |
+| RT-UI-001 | [Replace the artificial startup screen with real application loading](./rt-ui-001-functional-startup-loading.md) | done | 100% | Six-resource bootstrap (seven since RT-UI-007 added the ambience), truthful recovery UI, 36 passing tests, clean builds, and complete browser acceptance evidence. |
 | RT-UI-002 | [Add an animated Yukiko 3D model to the mode selector](./rt-ui-002-animated-yukiko-mode-selector.md) | paused | 10% | Parked by Edupa on 2026-08-30. RT-UI-004 rebuilt the same screen without a 3D model; the `Yukiko` component and the `.glb` assets are kept in place. Restarting it means deciding which screen it belongs to. |
 | RT-UI-003 | [Rebuild the home menu in the Persona 3 Reload style](./rt-ui-003-persona3-reload-home-menu.md) | done | 100% | Persistent pointer/keyboard cursor, GSAP blade + slash with reduced-motion fallback, 39 passing tests, clean build, and browser acceptance evidence. |
 | RT-UI-004 | [Rebuild the mode selector page in the Persona 3 Reload style](./rt-ui-004-persona3-reload-mode-selector.md) | done | 12/12 (100%) | 3D model gone (no `three` chunk in the build), plates and cursor ported from the home menu, blinking character artwork, 61 tests pass, clean lint and build, no overflow at seven widths, reduced-motion and tween-teardown both covered by tests. |
-| RT-UI-005 | [Add an optional Elizabeth-guided navigation tutorial on first load](./rt-ui-005-elizabeth-navigation-guide.md) | blocked | 0/11 (0%) | Task written. Blocked on the Elizabeth portrait art (I-1) and three open decisions (spotlight mechanism, prompt persistence, portrait side). Voice lines and lip-sync frames split into a follow-up. |
+| RT-UI-005 | [Add an optional Elizabeth-guided navigation tutorial across the first run](./rt-ui-005-elizabeth-navigation-guide.md) | done | 16/16 (100%) | Behaviour built, green and walked end to end in the browser against the running API. Her long speeches run several boxes, dismissed by a click or a key (AC-15); a mode she is merely describing is lit but not pressable, and the final box lights both and lets the player choose (AC-16). Reconciled 2026-09-21: AC-13 amended where the owner's visual pass outgrew it, and the script table now mirrors `steps.ts` rather than setting it. |
 | RT-UI-006 | [Rebuild the patch notes page in the Persona 3 Reload style](./rt-ui-006-persona3-reload-patch-notes.md) | planned | 0/9 (0%) | Task written. All inputs present. Static restyled cards (no cursor), patch data moves to a typed module, and the render-body `triggerH2Animation` yoyo is replaced with scoped GSAP. Two non-blocking decisions (ongoing motion, keep the random character). |
+| RT-UI-007 | [Play a quiet lounge track under the whole site that yields to every song](./rt-ui-007-site-wide-background-music.md) | done | 13/13 (100%) | Blues in Velvet Room streams from Cloudinary at 64 kbps, starts on load from 0:20, and fades out for every song and preview. Startup blocks on it and names the failure when it cannot load. 104 tests pass, clean lint and build, full cycle walked in the browser against the running API. |
+| RT-UI-008 | [Give Elizabeth a voice across the guided run](./rt-ui-008-elizabeth-voice-lines.md) | done | 7/7 (100%) | All ten guided steps are voiced, one recording each, and her mouth is timed by the audio instead of by the length of her text — with the old guess kept as the fallback for a line that will not play. 110 tests pass, clean lint and build, full walk in the browser with the ten files requested in step order. |
 
-**Portfolio completion:** 75% (equal-weight mean of the four tasks in play: 100%, 100%, 100%, 0%). RT-UI-002 is paused and excluded; RT-UI-005 is blocked and excluded.
+**Portfolio completion:** 86% (equal-weight mean of the seven tasks in play: 100%, 100%, 100%, 100%, 0%, 100%, 100%). RT-UI-002 is paused and excluded.
 
 ## Update checklist
 

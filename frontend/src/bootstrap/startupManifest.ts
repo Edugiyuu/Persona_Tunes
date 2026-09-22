@@ -1,8 +1,10 @@
+import { loadBackgroundMusic } from '../components/BackgroundMusic/bgmAudio'
+import { BGM_TRACK } from '../components/BackgroundMusic/bgmContext'
 import rodinDbUrl from '../assets/fonts/FOT-Rodin Pro DB.otf?url'
 import rodinEbUrl from '../assets/fonts/FOT-Rodin Pro EB.otf?url'
 import faktosUrl from '../assets/fonts/Faktos.ttf?url'
 
-export type StartupResourceKind = 'font' | 'image'
+export type StartupResourceKind = 'audio' | 'font' | 'image'
 
 export interface StartupResource {
   readonly id: string
@@ -45,6 +47,7 @@ export interface StartupManifestDependencies {
   readonly fonts?: StartupFontSet
   readonly createFontFace?: StartupFontFaceFactory
   readonly createImage?: () => StartupImage
+  readonly loadAudio?: (signal: AbortSignal) => Promise<void>
 }
 
 interface FontDefinition {
@@ -118,6 +121,14 @@ const IMAGE_DEFINITIONS: readonly ImageDefinition[] = [
     path: 'star.svg',
   },
 ]
+
+/** The site stays behind the loader until the ambience is ready to play. */
+const AUDIO_DEFINITION = {
+  critical: true,
+  id: 'background-music',
+  label: 'Background music',
+  url: BGM_TRACK,
+} as const
 
 function abortError(): DOMException {
   return new DOMException('Startup resource load was aborted', 'AbortError')
@@ -278,6 +289,7 @@ export function createStartupManifest(
     dependencies.createFontFace ??
     (dependencies.fonts ? undefined : browserFontFace)
   const createImage = dependencies.createImage ?? browserImage
+  const loadAudio = dependencies.loadAudio ?? loadBackgroundMusic
 
   const fontResources = FONT_DEFINITIONS.map(
     (definition): StartupManifestResource => ({
@@ -308,5 +320,14 @@ export function createStartupManifest(
     },
   )
 
-  return [...fontResources, ...imageResources]
+  const audioResource: StartupManifestResource = {
+    critical: AUDIO_DEFINITION.critical,
+    id: AUDIO_DEFINITION.id,
+    kind: 'audio',
+    label: AUDIO_DEFINITION.label,
+    load: (signal) => loadAudio(signal),
+    url: AUDIO_DEFINITION.url,
+  }
+
+  return [...fontResources, ...imageResources, audioResource]
 }

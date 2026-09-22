@@ -22,10 +22,12 @@ const hoverSoundUrl = publicAssetUrl(
 interface MenuItemDef {
   readonly title: string
   readonly to: string
+  /** Tags the entry for the guided tour (RT-UI-005). */
+  readonly guideTarget?: string
 }
 
 const MENU_ITEMS: readonly MenuItemDef[] = [
-  { title: 'SELECT MUSIC', to: '/musics' },
+  { title: 'SELECT MUSIC', to: '/musics', guideTarget: 'select-music' },
   { title: 'BONUS MUSICS', to: '/work-in-progress' },
   { title: 'PATCH NOTES', to: '/patch-notes' },
   { title: 'THE PROJECT', to: '/work-in-progress' },
@@ -137,6 +139,7 @@ const Home = ({ unavailableStartupResourceIds }: HomeProps) => {
 
                   <CustomLink
                     className="Link"
+                    data-guide-target={item.guideTarget}
                     tabIndex={-1}
                     title={item.title}
                     to={item.to}

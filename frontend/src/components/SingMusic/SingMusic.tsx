@@ -9,6 +9,8 @@ import AutoVoiceRecorder from "../AudioRecorder/AutoVoiceRecorder";
 import { triggerDialogAnimation, triggerBackDialogAnimation, TPDialogBack, triggerBackDialogAnimationMode, CutInAnimation, LyricsAnimation } from "./animations";
 import { PlayAudio } from "../../utils/PlayAudio";
 import MusicEnded from "../MusicEnded/MusicEnded";
+import { useGuideTour } from "../GuideTour/guideContext";
+import { useSilenceBackgroundMusic } from "../BackgroundMusic/useSilenceBackgroundMusic";
 
 interface Music {
   musicUrl: string;
@@ -36,6 +38,7 @@ function SingMusic() {
   const [userAudioId, setUserAudioId] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [character, setCharacter] = useState('');
+  const [songPlaying, setSongPlaying] = useState(false);
   const [videoUrl] = useState<string>(() => {
     const videos = [
       import.meta.env.VITE_VIDEO1_URL,
@@ -45,6 +48,10 @@ function SingMusic() {
     return videos[Math.floor(Math.random() * videos.length)];
   });
   const { id } = useParams();
+  // The guide keeps the song silent until it has finished the briefing (AC-8).
+  const { holdsPlayback } = useGuideTour();
+  // The song owns the room once it starts: the ambience steps aside for it.
+  useSilenceBackgroundMusic(songPlaying);
 
 
   useEffect(() => {
@@ -124,7 +131,7 @@ function SingMusic() {
           playsInline
         />
       )}
-      {audioUrl && (
+      {audioUrl && !holdsPlayback && (
         <AudioPlayer
           src={audioUrl}
           onListen={handleTimeUpdate}
@@ -134,8 +141,13 @@ function SingMusic() {
           layout="horizontal"
           autoPlay={true}
           volume={0.8}
-          onPlay={() => setStartRecording(true)}
+          onPlay={() => {
+            setStartRecording(true);
+            setSongPlaying(true);
+          }}
+          onPause={() => setSongPlaying(false)}
           onEnded={() => {
+            setSongPlaying(false);
             setStopRecording(true);
             setShowResult(true);
             setShowLyrics(false);
