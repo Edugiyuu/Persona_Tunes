@@ -26,7 +26,12 @@ document is. New tasks start from [`_template.md`](./_template.md).
   - `paused` — deliberately parked. Unlike `blocked`, nothing is missing: the
     work could proceed, and someone decided it should not, for now. Keep the
     row and say who parked it and what would restart it.
-  - `done` — every criterion checked with evidence. There is no 95%.
+  - `in-review` — every criterion checked with evidence, waiting on the owner
+    to accept it. It counts as in play and at its full percentage; what it is
+    not yet is signed off. It becomes `done` when the owner says so, which for
+    work on a branch normally means the pull request landing.
+  - `done` — every criterion checked with evidence, and accepted. There is no
+    95%.
   - `dropped` — abandoned or superseded; keep the row with the reason.
 - Portfolio completion is the equal-weight mean of the percentages of tasks that
   are actually in play. `paused` and `dropped` tasks are excluded — averaging in
